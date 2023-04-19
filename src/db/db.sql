@@ -16,6 +16,36 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
+-- Table structure for table `area`
+--
+
+DROP TABLE IF EXISTS `area`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `area` (
+  `Area_ID` int NOT NULL AUTO_INCREMENT,
+  `Area_Name` varchar(100) NOT NULL,
+  `Area_Size` varchar(100) NOT NULL,
+  `Area_Unit` varchar(10) DEFAULT NULL,
+  `Area_Type` varchar(50) DEFAULT NULL,
+  `Area_Locations` varchar(50) DEFAULT NULL,
+  `Area_Reservoir` varchar(100) NOT NULL,
+  `Area_Photo` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`Area_ID`),
+  UNIQUE KEY `Area_Name` (`Area_Name`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `area`
+--
+
+LOCK TABLES `area` WRITE;
+/*!40000 ALTER TABLE `area` DISABLE KEYS */;
+/*!40000 ALTER TABLE `area` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `culture`
 --
 
@@ -87,6 +117,44 @@ LOCK TABLES `culture_medium` WRITE;
 /*!40000 ALTER TABLE `culture_medium` DISABLE KEYS */;
 INSERT INTO `culture_medium` VALUES (1,'Test5','Ok5'),(6,'Test3','Ok');
 /*!40000 ALTER TABLE `culture_medium` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `culture_plan`
+--
+
+DROP TABLE IF EXISTS `culture_plan`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `culture_plan` (
+  `Culture_Plan_ID` int NOT NULL AUTO_INCREMENT,
+  `Activity_Type` varchar(50) NOT NULL,
+  `Area` varchar(100) NOT NULL,
+  `Plant_Type` varchar(100) NOT NULL,
+  `Crop_Type` varchar(100) NOT NULL,
+  `Container_Quantity` varchar(50) NOT NULL,
+  `Container_Type` varchar(50) NOT NULL,
+  `Transition_Time` date NOT NULL,
+  `Source_Area` varchar(100) DEFAULT NULL,
+  `Destination_Area` varchar(100) DEFAULT NULL,
+  `Number_of_Plants` int DEFAULT NULL,
+  PRIMARY KEY (`Culture_Plan_ID`),
+  KEY `culture_plan_FK` (`Area`),
+  KEY `culture_plan_FK_1` (`Source_Area`),
+  KEY `culture_plan_FK_2` (`Destination_Area`),
+  CONSTRAINT `culture_plan_FK` FOREIGN KEY (`Area`) REFERENCES `area` (`Area_Name`),
+  CONSTRAINT `culture_plan_FK_1` FOREIGN KEY (`Source_Area`) REFERENCES `area` (`Area_Name`),
+  CONSTRAINT `culture_plan_FK_2` FOREIGN KEY (`Destination_Area`) REFERENCES `area` (`Area_Name`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `culture_plan`
+--
+
+LOCK TABLES `culture_plan` WRITE;
+/*!40000 ALTER TABLE `culture_plan` DISABLE KEYS */;
+/*!40000 ALTER TABLE `culture_plan` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
