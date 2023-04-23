@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const express = require('express');
 const bodyParser = require('body-parser');
 const userRoutes = require('./routes/users');
@@ -13,15 +15,17 @@ const plantRoutes = require('./routes/plant');
 const taskRoutes = require('./routes/tasks');
 const areaRoutes = require('./routes/area');
 const culturePlanRoutes = require('./routes/culturePlan');
+const materialRoutes = require('./routes/material');
 const dbConnection = require('./config/dbConnection');
 const cors = require('cors');
+
 const app = express();
 app.use(cors());
 // Parse incoming request bodies as JSON
 app.use(bodyParser.json());
 
 // Route handlers
-app.use('/api', userRoutes, cultureMediumRoutes, fieldRoutes, cultureRoutes, greenHouseRoutes, growthParametersRoutes, labRoutes, growthRecordRoutes, nurseryRoutes, plantRoutes, taskRoutes, areaRoutes, culturePlanRoutes);
+app.use('/api', userRoutes, cultureMediumRoutes, fieldRoutes, cultureRoutes, greenHouseRoutes, growthParametersRoutes, labRoutes, growthRecordRoutes, nurseryRoutes, plantRoutes, taskRoutes, areaRoutes, culturePlanRoutes, materialRoutes);
 
 // Connect to database
 dbConnection.connect((err) => {

@@ -12,6 +12,7 @@ class CulturePlan {
         this.Source_Area = culturePlan.Source_Area;
         this.Destination_Area = culturePlan.Destination_Area;
         this.Number_of_Plants = culturePlan.Number_of_Plants;
+        this.Task_ID = culturePlan.Task_ID;
     }
 
     static findAll(result) {
@@ -45,8 +46,8 @@ class CulturePlan {
     }
 
     static updateCulturePlan(culturePlan, result) {
-        const updateQuery = 'UPDATE culture_plan SET Activity_Type = ?, Area = ?, Plant_Type = ?, Crop_Type = ?, Container_Quantity = ?, Container_Type = ?, Transition_Time = ? WHERE Culture_Plan_ID = ?';
-        const updateData = [culturePlan.Activity_Type, culturePlan.Area, culturePlan.Plant_Type, culturePlan.Crop_Type, culturePlan.Container_Quantity, culturePlan.Container_Type, culturePlan.Transition_Time, culturePlan.Culture_Plan_ID];
+        const updateQuery = 'UPDATE culture_plan SET Activity_Type = ?, Area = ?, Plant_Type = ?, Crop_Type = ?, Container_Quantity = ?, Container_Type = ?, Transition_Time = ?, Task_ID = ? WHERE Culture_Plan_ID = ?';
+        const updateData = [culturePlan.Activity_Type, culturePlan.Area, culturePlan.Plant_Type, culturePlan.Crop_Type, culturePlan.Container_Quantity, culturePlan.Container_Type, culturePlan.Transition_Time, culturePlan.Task_ID, culturePlan.Culture_Plan_ID];
 
         connection.query(updateQuery, updateData, (err, res) => {
             if (err) {
@@ -95,7 +96,5 @@ class CulturePlan {
     }
 
 }
-
-
 
 module.exports = CulturePlan;

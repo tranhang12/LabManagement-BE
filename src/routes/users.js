@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const userController = require('../controllers/users');
+const jwtMiddleware = require('../middlewares/jwtMiddleware')
 
 router.post('/signup', userController.signup);
 

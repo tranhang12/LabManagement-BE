@@ -1,3 +1,4 @@
+const createToken = require('../helper/createToken');
 const User = require('../models/users');
 const encryption = require('../helper/encryption');
 const auth = require('basic-auth');
@@ -64,9 +65,9 @@ exports.signup = (req, res) => {
 
 exports.login = (req, res) => {
     try {
-        const user = auth(req);
-        const username = user.name;
-        const password = user.pass;
+        const user = req.body; //auth(req);
+        const username = user.userName;
+        const password = user.password;
 
         User.findByUsername(username, (err, user) => {
             if (err) {
@@ -90,10 +91,13 @@ exports.login = (req, res) => {
                 user.User_Password = undefined;
                 delete user.User_Password;
 
+                const accessToken = createToken(user);
+
                 res.status(200).send({
                     status: true,
                     message: 'Login successful',
-                    user: user
+                    user: user,
+                    accessToken: accessToken
                 });
             } else {
                 res.status(401).send({

@@ -2,7 +2,7 @@ const connection = require('../config/dbConnection');
 
 class GrowthRecord {
     constructor(growthRecord) {
-        this.Culture_ID = growthRecord.Culture_ID;
+        this.Culture_Plan_ID = growthRecord.Culture_Plan_ID;
         this.Observation_Date = growthRecord.Observation_Date;
         this.Height = growthRecord.Height;
         this.Width = growthRecord.Width;
@@ -43,8 +43,8 @@ class GrowthRecord {
     }
 
     static updateGrowthRecord(growthRecord, result) {
-        const updateQuery = 'UPDATE growth_record SET Culture_ID = ?, Observation_Date = ?, Height = ?, Width = ?, Number_of_Leaves = ?, Health_Status = ?, Image = ? WHERE Growth_Record_ID = ?';
-        const updateData = [growthRecord.Culture_ID, growthRecord.Observation_Date, growthRecord.Height, growthRecord.Width, growthRecord.Number_of_Leaves, growthRecord.Health_Status, growthRecord.Image, growthRecord.Growth_Record_ID];
+        const updateQuery = 'UPDATE growth_record SET Culture_Plan_ID = ?, Observation_Date = ?, Height = ?, Width = ?, Number_of_Leaves = ?, Health_Status = ?, Image = ? WHERE Growth_Record_ID = ?';
+        const updateData = [growthRecord.Culture_Plan_ID, growthRecord.Observation_Date, growthRecord.Height, growthRecord.Width, growthRecord.Number_of_Leaves, growthRecord.Health_Status, growthRecord.Image, growthRecord.Growth_Record_ID];
 
         connection.query(updateQuery, updateData, (err, res) => {
             if (err) {
