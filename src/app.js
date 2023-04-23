@@ -11,6 +11,7 @@ const taskRoutes = require('./routes/tasks');
 const areaRoutes = require('./routes/area');
 const culturePlanRoutes = require('./routes/culturePlan');
 const materialRoutes = require('./routes/material');
+const cultureMediumRelationRoutes = require('./routes/cultureMediumRelation')
 const dbConnection = require('./config/dbConnection');
 const cors = require('cors');
 
@@ -20,7 +21,7 @@ app.use(cors());
 app.use(bodyParser.json());
 
 // Route handlers
-app.use('/api', userRoutes, cultureMediumRoutes, cultureRoutes, growthRecordRoutes, plantRoutes, taskRoutes, areaRoutes, culturePlanRoutes, materialRoutes);
+app.use('/api', userRoutes, cultureMediumRoutes, cultureRoutes, growthRecordRoutes, plantRoutes, taskRoutes, areaRoutes, culturePlanRoutes, materialRoutes, cultureMediumRelationRoutes);
 
 // Connect to database
 dbConnection.connect((err) => {
