@@ -4,13 +4,8 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const userRoutes = require('./routes/users');
 const cultureMediumRoutes = require('./routes/cultureMedium');
-const fieldRoutes = require('./routes/field');
 const cultureRoutes = require('./routes/culture');
-const greenHouseRoutes = require('./routes/greenHouse');
-const labRoutes = require('./routes/lab')
-const growthParametersRoutes = require('./routes/growthParameters');
 const growthRecordRoutes = require('./routes/growthRecord');
-const nurseryRoutes = require('./routes/nursery');
 const plantRoutes = require('./routes/plant');
 const taskRoutes = require('./routes/tasks');
 const areaRoutes = require('./routes/area');
@@ -25,7 +20,7 @@ app.use(cors());
 app.use(bodyParser.json());
 
 // Route handlers
-app.use('/api', userRoutes, cultureMediumRoutes, fieldRoutes, cultureRoutes, greenHouseRoutes, growthParametersRoutes, labRoutes, growthRecordRoutes, nurseryRoutes, plantRoutes, taskRoutes, areaRoutes, culturePlanRoutes, materialRoutes);
+app.use('/api', userRoutes, cultureMediumRoutes, cultureRoutes, growthRecordRoutes, plantRoutes, taskRoutes, areaRoutes, culturePlanRoutes, materialRoutes);
 
 // Connect to database
 dbConnection.connect((err) => {

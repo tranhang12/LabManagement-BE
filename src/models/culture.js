@@ -9,7 +9,10 @@ class Culture {
         this.Duration_Of_Bud_Regeneration = culture.Duration_Of_Bud_Regeneration;
         this.Duration_Of_Multiply_Bud = culture.Duration_Of_Multiply_Bud;
         this.Duration_Of_Rooting = culture.Duration_Of_Rooting;
-        this.Growth_Parameters_ID = culture.Growth_Parameters_ID;
+        this.Temperature_Min = culture.Temperature_Min;
+        this.Temperature_Max = culture.Temperature_Max;
+        this.Light_intensity = culture.Light_intensity;
+        this.Lighting_Time = culture.Lighting_Time;
     }
 
     static findAll(result) {
