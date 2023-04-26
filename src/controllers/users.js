@@ -20,7 +20,7 @@ exports.signup = (req, res) => {
         User.signUp(newUser, (err, result) => {
             if (err) {
                 if (err.code == 'ER_DUP_ENTRY') {
-                    res.status(500).send({
+                    res.status(409).send({
                         status: false,
                         message: 'Username already exists in the system'
                     });
@@ -51,7 +51,7 @@ exports.signup = (req, res) => {
 
             res.status(200).send({
                 status: true,
-                message: 'Signup successful'
+                message: 'Sign up successful'
             });
         });
     }
@@ -62,6 +62,45 @@ exports.signup = (req, res) => {
         });
     }
 }
+
+exports.createUser = async (req, res) => {
+    try {
+        const { username, password, fullName, email, phoneNumber, isAdmin } = req.body;
+
+        const existingUser = await User.findByUsername(username);
+
+        if (existingUser) {
+            return res.status(409).send({
+                status: false,
+                message: 'Username already exists in the system'
+            });
+        }
+
+        const encryptedPassword = encryption.encrypt(password);
+
+        const newUser = new User({ username, password: encryptedPassword, fullName, email, phoneNumber, isAdmin: is_admin || false });
+
+        User.signUp(newUser, (err, result) => {
+            if (err) {
+                res.status(500).send({
+                    status: false,
+                    message: 'Error in login info:' + err.message
+                });
+            } else {
+                res.status(201).send({
+                    status: true,
+                    message: 'User created successfully',
+                    user: newUser
+                });
+            }
+        });
+    } catch (error) {
+        res.status(500).send({
+            status: false,
+            message: 'Error creating user:' + error.message
+        });
+    }
+};
 
 exports.login = (req, res) => {
     try {

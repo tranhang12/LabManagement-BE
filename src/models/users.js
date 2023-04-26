@@ -6,6 +6,7 @@ class User {
         this.User_Password = user.password;
         this.Full_Name = user.fullName;
         this.Phone_Number = user.phoneNumber;
+        this.Email = user.email;
         this.Is_Admin = user.isAdmin;
     }
 

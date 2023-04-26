@@ -7,8 +7,6 @@ class Area {
         this.Area_Unit = area.Area_Unit;
         this.Area_Type = area.Area_Type;
         this.Area_Locations = area.Area_Locations;
-        this.Area_Reservoir = area.Area_Reservoir;
-        this.Area_Photo = area.Area_Photo;
     }
     static findAll(result) {
         connection.query('SELECT * FROM area', (err, res) => {
@@ -55,9 +53,8 @@ class Area {
         });
     }
     static updateArea(area, result) {
-        const updateQuery = 'UPDATE area SET Area_Name = ?, Area_Size = ?,Area_Unit = ? ,Area_Type = ?, Area_Locations = ?, Area_Reservoir = ? ,Area_Photo = ? WHERE Area_ID = ?'
-        const updateData = [area.Area_Name, area.Area_Size, area.Area_Unit, area.Area_Type,area.Area_Locations,
-             area.Area_Reservoir, area.Area_Photo, area.Id]
+        const updateQuery = 'UPDATE area SET Area_Name = ?, Area_Size = ?,Area_Unit = ? ,Area_Type = ?, Area_Locations = ? WHERE Area_ID = ?'
+        const updateData = [area.Area_Name, area.Area_Size, area.Area_Unit, area.Area_Type,area.Area_Locations, area.Id]
         
         connection.query(updateQuery, updateData, (err, res) => {
             if (err) {
