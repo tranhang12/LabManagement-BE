@@ -387,3 +387,66 @@ exports.deleteUser = (req, res) => {
     }
 }
 
+exports.getAllUsers = (req, res) => {
+    try {
+        const user = auth(req);
+        const username = user.name;
+        const password = user.pass;
+
+        User.findByUsername(username, (err, user) => {
+            if (err) {
+                res.status(500).send({
+                    status: false,
+                    message: 'Error retrieving user from database:' + err.message
+                });
+                return;
+            }
+
+            if (!user) {
+                res.status(401).send({
+                    status: false,
+                    message: 'Invalid username or password'
+                });
+                return;
+            }
+
+            const result = encryption.compare(password, user.User_Password);
+            if (result === true) {
+                if (!user.Is_Admin) {
+                    res.status(401).send({
+                        status: false,
+                        message: 'Unauthorized to get all users'
+                    });
+                    return;
+                }
+
+                User.getAll((err, users) => {
+                    if (err) {
+                        res.status(500).send({
+                            status: false,
+                            message: 'Error retrieving users from database:' + err.message
+                        });
+                    } else {
+                        res.status(200).send({
+                            status: true,
+                            message: 'Users retrieved successfully',
+                            users: users
+                        });
+                    }
+                });
+            } else {
+                res.status(401).send({
+                    status: false,
+                    message: 'Unauthorized to get all users'
+                });
+                return;
+            }
+        });
+
+    } catch (error) {
+        res.status(500).send({
+            status: false,
+            message: 'Error getting all users:' + error.message
+        });
+    }
+};

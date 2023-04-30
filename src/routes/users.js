@@ -11,5 +11,6 @@ router.post('/login', userController.login);
 router.post('/update', jwtMiddleware, userController.updateUserInfo);
 router.post('/reset', jwtMiddleware, userController.resetPassword);
 router.delete('/delete', jwtMiddleware, checkAdmin, userController.deleteUser);
+router.get('/getAllUsers', userController.getAllUsers);
 
 module.exports = router;

@@ -7,6 +7,7 @@ class Area {
         this.Area_Unit = area.Area_Unit;
         this.Area_Type = area.Area_Type;
         this.Area_Locations = area.Area_Locations;
+        this.Quantity = area.Quantity;
     }
     static findAll(result) {
         connection.query('SELECT * FROM area', (err, res) => {
