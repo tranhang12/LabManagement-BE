@@ -12,6 +12,10 @@ const areaRoutes = require('./routes/area');
 const culturePlanRoutes = require('./routes/culturePlan');
 const materialRoutes = require('./routes/material');
 const cultureMediumRelationRoutes = require('./routes/cultureMediumRelation')
+const harvestStorageRoutes = require('./routes/harvestStorage')
+const movedAreaRoutes = require('./routes/movedArea')
+const trashRoutes = require('./routes/trash')
+const userCulturePlanRoutes = require('./routes/userCulturePlan')
 const dbConnection = require('./config/dbConnection');
 const cors = require('cors');
 
@@ -21,7 +25,20 @@ app.use(cors());
 app.use(bodyParser.json());
 
 // Route handlers
-app.use('/api', userRoutes, cultureMediumRoutes, cultureRoutes, growthRecordRoutes, plantRoutes, taskRoutes, areaRoutes, culturePlanRoutes, materialRoutes, cultureMediumRelationRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/cultureMedium', cultureMediumRoutes);
+app.use('/api/culture', cultureRoutes);
+app.use('/api/growthRecord', growthRecordRoutes);
+app.use('/api/plant', plantRoutes);
+app.use('/api/tasks', taskRoutes);
+app.use('/api/area', areaRoutes);
+app.use('/api/culturePlan', culturePlanRoutes);
+app.use('/api/material', materialRoutes);
+app.use('/api/cultureMediumRelation', cultureMediumRelationRoutes);
+app.use('/api/harvestStorage', harvestStorageRoutes);
+app.use('/api/movedArea', movedAreaRoutes);
+app.use('/api/trash', trashRoutes);
+app.use('/api/userCulturePlan', userCulturePlanRoutes);
 
 // Connect to database
 dbConnection.connect((err) => {

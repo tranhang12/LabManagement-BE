@@ -1,7 +1,7 @@
-const createToken = require('../helper/createToken');
+const createToken = require('../helper/jwtMiddleware').sign;
+const jwtMiddleware = require('../helper/jwtMiddleware');
 const User = require('../models/users');
 const encryption = require('../helper/encryption');
-const auth = require('basic-auth');
 
 exports.signup = (req, res) => {
     try {
@@ -65,9 +65,9 @@ exports.signup = (req, res) => {
 
 exports.createUser = async (req, res) => {
     try {
-        const { username, password, fullName, email, phoneNumber, isAdmin } = req.body;
+        const { userName, password, fullName, email, phoneNumber, isAdmin } = req.body;
 
-        const existingUser = await User.findByUsername(username);
+        const existingUser = await User.findByUsername(userName);
 
         if (existingUser) {
             return res.status(409).send({
@@ -78,7 +78,7 @@ exports.createUser = async (req, res) => {
 
         const encryptedPassword = encryption.encrypt(password);
 
-        const newUser = new User({ username, password: encryptedPassword, fullName, email, phoneNumber, isAdmin: is_admin || false });
+        const newUser = new User({ userName, password: encryptedPassword, fullName, email, phoneNumber, isAdmin: isAdmin || false });
 
         User.signUp(newUser, (err, result) => {
             if (err) {
@@ -102,9 +102,10 @@ exports.createUser = async (req, res) => {
     }
 };
 
+
 exports.login = (req, res) => {
     try {
-        const user = req.body; //auth(req);
+        const user = req.body; //req.body;
         const username = user.userName;
         const password = user.password;
 
@@ -129,8 +130,8 @@ exports.login = (req, res) => {
             if (result === true) {
                 user.User_Password = undefined;
                 delete user.User_Password;
-
-                const accessToken = createToken(user);
+                // const accessToken = createToken(user);
+                const accessToken = createToken({ id: user.User_ID, username: user.User_Name, isAdmin: user.Is_Admin });
 
                 res.status(200).send({
                     status: true,
@@ -154,165 +155,190 @@ exports.login = (req, res) => {
         });
     }
 };
+exports.getUser = (req, res) => {
+    const userId = req.params.id;
 
-exports.updateUserInfo = (req, res) => {
-    try {
-        const user = auth(req);
-        const username = user.name;
-        const password = user.pass;
+    User.findById(userId, (err, user) => {
+        if (err) {
+            res.status(500).send({
+                status: false,
+                message: 'Error retrieving user from database:' + err.message
+            });
+            return;
+        }
 
-        User.findByUsername(username, (err, user) => {
-            if (err) {
-                res.status(500).send({
-                    status: false,
-                    message: 'Error retrieving user from database:' + err.message
-                });
-                return;
-            }
+        if (!user) {
+            res.status(404).send({
+                status: false,
+                message: 'User not found'
+            });
+            return;
+        }
 
-            if (!user) {
-                res.status(500).send({
-                    status: false,
-                    message: 'Invalid username or password'
-                });
-                return;
-            }
-
-            const result = encryption.compare(password, user.User_Password);
-            if (result === true) {
-                if (!user.Is_Admin) {
-                    res.status(401).send({
-                        status: false,
-                        message: 'Unauthorized to update user'
-                    });
-                    return;
-                }
-
-                const updateUser = new User(req.body);
-
-                User.updateUser(updateUser, (err, result) => {
-                    if (err) {
-                        res.status(500).send({
-                            status: false,
-                            message: 'Error updating user in database:' + err.message
-                        });
-                        return;
-                    }
-
-                    else if (result < 1) {
-                        res.status(500).send({
-                            status: false,
-                            message: 'Error updating user in database'
-                        });
-                        return;
-                    }
-
-                    res.status(200).send({
-                        status: true,
-                        message: 'User updated successfully'
-                    });
-                });
-            }
-            else {
-                res.status(401).send({
-                    status: false,
-                    message: 'Unauthorized to update user.'
-                });
-                return;
-            }
+        res.status(200).send({
+            status: true,
+            message: 'User retrieved successfully',
+            user: user
         });
-    } catch (error) {
-        res.status(500).send({
-            status: false,
-            message: 'Error in updating user info:' + error.message
-        });
-    }
-}
+    });
+};
 
-exports.resetPassword = (req, res) => {
-    try {
-        const user = auth(req);
-        const username = user.name;
-        const password = user.pass;
+// exports.updateUser = (req, res) => {
+//     try {
+//         const user = req.body;
+//         const username = user.name;
+//         const password = user.pass;
 
-        User.findByUsername(username, (err, user) => {
-            if (err) {
-                res.status(500).send({
-                    status: false,
-                    message: 'Error retrieving user from database:' + err.message
-                });
-                return;
-            }
+//         User.findByUsername(username, (err, user) => {
+//             if (err) {
+//                 res.status(500).send({
+//                     status: false,
+//                     message: 'Error retrieving user from database:' + err.message
+//                 });
+//                 return;
+//             }
 
-            if (!user) {
-                res.status(500).send({
-                    status: false,
-                    message: 'Invalid username or password'
-                });
-                return;
-            }
+//             if (!user) {
+//                 res.status(500).send({
+//                     status: false,
+//                     message: 'Invalid username or password'
+//                 });
+//                 return;
+//             }
 
-            const result = encryption.compare(password, user.User_Password);
-            if (result === true) {
-                if (!user.Is_Admin) {
-                    res.status(401).send({
-                        status: false,
-                        message: 'Unauthorized to reset password'
-                    });
-                    return;
-                }
+//             const result = encryption.compare(password, user.User_Password);
+//             if (result === true) {
+//                 if (!user.Is_Admin) {
+//                     res.status(401).send({
+//                         status: false,
+//                         message: 'Unauthorized to update user'
+//                     });
+//                     return;
+//                 }
 
-                req.body.password = encryption.encrypt(req.body.password);
+//                 const updateUser = new User(req.body);
 
-                const resetUserPassword = new User(req.body);
+//                 User.updateUser(updateUser, (err, result) => {
+//                     if (err) {
+//                         res.status(500).send({
+//                             status: false,
+//                             message: 'Error updating user in database:' + err.message
+//                         });
+//                         return;
+//                     }
 
-                User.resetPassword(resetUserPassword, (err, result) => {
-                    if (err) {
-                        res.status(500).send({
-                            status: false,
-                            message: 'Error resetting password in database'
-                        });
-                        return;
-                    }
+//                     else if (result < 1) {
+//                         res.status(500).send({
+//                             status: false,
+//                             message: 'Error updating user in database'
+//                         });
+//                         return;
+//                     }
 
-                    else if (result < 1) {
-                        res.status(500).send({
-                            status: false,
-                            message: 'Error resetting password in database'
-                        });
-                        return;
-                    }
+//                     res.status(200).send({
+//                         status: true,
+//                         message: 'User updated successfully'
+//                     });
+//                 });
+//             }
+//             else {
+//                 res.status(401).send({
+//                     status: false,
+//                     message: 'Unauthorized to update user.'
+//                 });
+//                 return;
+//             }
+//         });
+//     } catch (error) {
+//         res.status(500).send({
+//             status: false,
+//             message: 'Error in updating user info:' + error.message
+//         });
+//     }
+// }
 
-                    res.status(200).send({
-                        status: true,
-                        message: 'Password reset successfully'
-                    });
-                });
-            }
-            else {
-                res.status(401).send({
-                    status: false,
-                    message: 'Unauthorized to reset password.'
-                });
-                return;
-            }
-        });
-    }
-    catch (error) {
-        res.status(500).send({
-            status: false,
-            message: 'Error in reseting  user password' + error.message
-        });
-    }
-}
+// exports.resetPassword = (req, res) => {
+//     try {
+//         const user = req.body;
+//         const username = user.name;
+//         const password = user.pass;
+
+//         User.findByUsername(username, (err, user) => {
+//             if (err) {
+//                 res.status(500).send({
+//                     status: false,
+//                     message: 'Error retrieving user from database:' + err.message
+//                 });
+//                 return;
+//             }
+
+//             if (!user) {
+//                 res.status(500).send({
+//                     status: false,
+//                     message: 'Invalid username or password'
+//                 });
+//                 return;
+//             }
+
+//             const result = encryption.compare(password, user.User_Password);
+//             if (result === true) {
+//                 if (!user.Is_Admin) {
+//                     res.status(401).send({
+//                         status: false,
+//                         message: 'Unauthorized to reset password'
+//                     });
+//                     return;
+//                 }
+
+//                 req.body.password = encryption.encrypt(req.body.password);
+
+//                 const resetUserPassword = new User(req.body);
+
+//                 User.resetPassword(resetUserPassword, (err, result) => {
+//                     if (err) {
+//                         res.status(500).send({
+//                             status: false,
+//                             message: 'Error resetting password in database'
+//                         });
+//                         return;
+//                     }
+
+//                     else if (result < 1) {
+//                         res.status(500).send({
+//                             status: false,
+//                             message: 'Error resetting password in database'
+//                         });
+//                         return;
+//                     }
+
+//                     res.status(200).send({
+//                         status: true,
+//                         message: 'Password reset successfully'
+//                     });
+//                 });
+//             }
+//             else {
+//                 res.status(401).send({
+//                     status: false,
+//                     message: 'Unauthorized to reset password.'
+//                 });
+//                 return;
+//             }
+//         });
+//     }
+//     catch (error) {
+//         res.status(500).send({
+//             status: false,
+//             message: 'Error in reseting  user password' + error.message
+//         });
+//     }
+// }
 
 exports.deleteUser = (req, res) => {
     try {
-        const user = auth(req);
-        const username = user.name;
-        const password = user.pass;
+        const userId = req.params.id;
 
-        User.findByUsername(username, (err, user) => {
+        User.findById(userId, (err, user) => {
             if (err) {
                 res.status(500).send({
                     status: false,
@@ -322,61 +348,35 @@ exports.deleteUser = (req, res) => {
             }
 
             if (!user) {
-                res.status(500).send({
+                res.status(404).send({
                     status: false,
-                    message: 'Invalid username or password'
+                    message: 'User not found'
                 });
                 return;
             }
 
-            const result = encryption.compare(password, user.User_Password);
-            if (result === true) {
-                if (!user.Is_Admin) {
-                    res.status(401).send({
+            User.deleteUserById(userId, (err, result) => {
+                if (err) {
+                    res.status(500).send({
                         status: false,
-                        message: 'Unauthorized to delete user.'
+                        message: 'Error deleting user in database:' + err.message
                     });
                     return;
                 }
 
-                const deleteUser = new User(req.body);
-
-                User.deleteUser(deleteUser, (err, result) => {
-                    if (err) {
-                        if (err.code.includes("ER_ROW_IS_REFERENCED")) {
-                            res.status(500).send({
-                                status: false,
-                                message: 'Unable to delete user. Task is assigned to ' + deleteUser.User_Name
-                            });
-                        }
-                        res.status(500).send({
-                            status: false,
-                            message: 'Error deleting user in database'
-                        });
-                        return;
-                    }
-
-                    else if (result < 1) {
-                        res.status(500).send({
-                            status: false,
-                            message: 'Error deleting user in database'
-                        });
-                        return;
-                    }
-
-                    res.status(200).send({
-                        status: true,
-                        message: 'User deleted successfully.'
+                if (result < 1) {
+                    res.status(500).send({
+                        status: false,
+                        message: 'Error deleting user in database'
                     });
+                    return;
+                }
+
+                res.status(200).send({
+                    status: true,
+                    message: 'User deleted successfully.'
                 });
-            }
-            else {
-                res.status(401).send({
-                    status: false,
-                    message: 'Unauthorized to delete user.'
-                });
-                return;
-            }
+            });
         });
     }
     catch (error) {
@@ -387,13 +387,13 @@ exports.deleteUser = (req, res) => {
     }
 }
 
-exports.getAllUsers = (req, res) => {
-    try {
-        const user = auth(req);
-        const username = user.name;
-        const password = user.pass;
 
-        User.findByUsername(username, (err, user) => {
+exports.updateUserInfo = (req, res) => {
+    try {
+        const { id } = req.params;
+        const { userName, fullName, phoneNumber, isAdmin, password, email } = req.body;
+
+        User.findById(id, (err, user) => {
             if (err) {
                 res.status(500).send({
                     status: false,
@@ -403,50 +403,67 @@ exports.getAllUsers = (req, res) => {
             }
 
             if (!user) {
-                res.status(401).send({
+                res.status(404).send({
                     status: false,
-                    message: 'Invalid username or password'
+                    message: 'User not found'
                 });
                 return;
             }
 
-            const result = encryption.compare(password, user.User_Password);
-            if (result === true) {
-                if (!user.Is_Admin) {
-                    res.status(401).send({
+            const updatedUser = {
+                User_Name: userName,
+                Full_Name: fullName,
+                Phone_Number: phoneNumber,
+                Is_Admin: isAdmin,
+                email: email,
+                User_Password: password ? encryption.encrypt(password) : user.User_Password
+            };
+
+            User.updateUserById(id, updatedUser, (err, result) => {
+                if (err) {
+                    res.status(500).send({
                         status: false,
-                        message: 'Unauthorized to get all users'
+                        message: 'Error updating user in database:' + err.message
                     });
                     return;
                 }
 
-                User.getAll((err, users) => {
-                    if (err) {
-                        res.status(500).send({
-                            status: false,
-                            message: 'Error retrieving users from database:' + err.message
-                        });
-                    } else {
-                        res.status(200).send({
-                            status: true,
-                            message: 'Users retrieved successfully',
-                            users: users
-                        });
-                    }
-                });
-            } else {
-                res.status(401).send({
-                    status: false,
-                    message: 'Unauthorized to get all users'
-                });
-                return;
-            }
-        });
+                if (result < 1) {
+                    res.status(500).send({
+                        status: false,
+                        message: 'Error updating user in database'
+                    });
+                    return;
+                }
 
+                res.status(200).send({
+                    status: true,
+                    message: 'User info updated successfully'
+                });
+            });
+        });
     } catch (error) {
         res.status(500).send({
             status: false,
-            message: 'Error getting all users:' + error.message
+            message: 'Error in updating user info:' + error.message
         });
     }
-};
+}
+
+exports.getAllUsers = (req, res) => {
+    User.getAll((err, users) => {
+      if (err) {
+        res.status(500).send({
+          status: false,
+          message: 'Error retrieving users from database: ' + err.message
+        });
+      } else {
+        res.status(200).send({
+          status: true,
+          message: 'Users retrieved successfully',
+          users: users
+        });
+      }
+    });
+  };
+    

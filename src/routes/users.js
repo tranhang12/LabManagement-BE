@@ -1,16 +1,14 @@
 const express = require('express');
 const router = express.Router();
 const userController = require('../controllers/users');
-const jwtMiddleware = require('../middlewares/jwtMiddleware');
-const checkAdmin = require('../middlewares/checkAdmin');
+const jwtMiddleware = require('../helper/jwtMiddleware');
 
-router.post('/create', jwtMiddleware, checkAdmin, userController.createUser);
 router.post('/signup', userController.signup);
 router.post('/login', userController.login);
-
-router.post('/update', jwtMiddleware, userController.updateUserInfo);
-router.post('/reset', jwtMiddleware, userController.resetPassword);
-router.delete('/delete', jwtMiddleware, checkAdmin, userController.deleteUser);
-router.get('/getAllUsers', userController.getAllUsers);
+router.post('/createUser', jwtMiddleware.jwtMiddleware(), jwtMiddleware.isAdmin, userController.createUser);
+router.get('/getAllUsers', jwtMiddleware.jwtMiddleware(), jwtMiddleware.isAdmin, userController.getAllUsers);
+router.get('/getUser/:id', jwtMiddleware.jwtMiddleware(), jwtMiddleware.isAuthenticated, userController.getUser);
+router.put('/updateUserInfo/:id', jwtMiddleware.jwtMiddleware(), jwtMiddleware.isAdmin, userController.updateUserInfo);
+router.delete('/deleteUser/:id', jwtMiddleware.jwtMiddleware(), jwtMiddleware.isAdmin, userController.deleteUser);
 
 module.exports = router;
