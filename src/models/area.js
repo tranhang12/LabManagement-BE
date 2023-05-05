@@ -38,12 +38,13 @@ class Area {
                 result(err, null);
             } else {
                 //console.log(res)
-                result(null, res);
+                result(null, res[0]);
             }
         });
     }
     static createArea(area, result) {
 
+       // console.log(area)
         connection.query('INSERT INTO area SET ?', area, (err, res) => {
             if (err) {
 

@@ -16,6 +16,8 @@ const harvestStorageRoutes = require('./routes/harvestStorage')
 const movedAreaRoutes = require('./routes/movedArea')
 const trashRoutes = require('./routes/trash')
 const userCulturePlanRoutes = require('./routes/userCulturePlan')
+const culturePlanRoute = require('./routes/culturePlanRoutes');
+const { getRecordCount } = require('./controllers/count');
 const dbConnection = require('./config/dbConnection');
 const cors = require('cors');
 
@@ -26,19 +28,33 @@ app.use(bodyParser.json());
 
 // Route handlers
 app.use('/api/users', userRoutes);
-app.use('/api/cultureMedium', cultureMediumRoutes);
-app.use('/api/culture', cultureRoutes);
-app.use('/api/growthRecord', growthRecordRoutes);
-app.use('/api/plant', plantRoutes);
+app.use('/api/', cultureMediumRoutes);
+app.use('/api/', cultureRoutes);
+app.use('/api/', growthRecordRoutes);
+app.use('/api/', plantRoutes);
 app.use('/api/tasks', taskRoutes);
-app.use('/api/area', areaRoutes);
-app.use('/api/culturePlan', culturePlanRoutes);
+app.use('/api/', areaRoutes);
+app.use('/api/', culturePlanRoutes);
 app.use('/api/material', materialRoutes);
-app.use('/api/cultureMediumRelation', cultureMediumRelationRoutes);
-app.use('/api/harvestStorage', harvestStorageRoutes);
-app.use('/api/movedArea', movedAreaRoutes);
-app.use('/api/trash', trashRoutes);
-app.use('/api/userCulturePlan', userCulturePlanRoutes);
+app.use('/api/', cultureMediumRelationRoutes);
+app.use('/api/', harvestStorageRoutes);
+app.use('/api/', movedAreaRoutes);
+app.use('/api/', trashRoutes);
+app.use('/api/', userCulturePlanRoutes);
+app.use('/api', culturePlanRoute);
+
+app.get('/api/recordCounts', async (req, res) => {
+    try {
+      const areaCount = await getRecordCount('area');
+      const culturePlanCount = await getRecordCount('culture_plan');
+      const tasksCount = await getRecordCount('tasks');
+  
+      res.json({ areaCount, culturePlanCount, tasksCount });
+    } catch (error) {
+      console.error(error);
+      res.status(500).send('Server error');
+    }
+  });
 
 // Connect to database
 dbConnection.connect((err) => {

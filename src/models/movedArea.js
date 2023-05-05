@@ -6,7 +6,9 @@ class MovedArea {
         this.Area_UID = movedArea.Area_UID;
         this.Name = movedArea.Name;
         this.Initial_Quantity = movedArea.Initial_Quantity;
-        this.Current_Quantity = movedArea.Current_Quantity
+        this.Current_Quantity = movedArea.Current_Quantity;
+        this.Transition_Time = movedArea.Transition_Time;
+        this.Remaining_Days = movedArea.Remaining_Days;
     }
 
     static findAll(result) {
@@ -43,8 +45,8 @@ class MovedArea {
     }
     
     static updatemovedArea(movedArea, result) {
-        const updateQuery = 'UPDATE crop_read_moved_area SET Crop_UID = ?, Current_Quantity = ?, Area_UID = ?, Name = ?, Initial_Quantity = ?  WHERE ID = ?';
-        const updateData = [movedArea.Crop_UID, movedArea.Current_Quantity, movedArea.Area_UID, movedArea.Name, movedArea.Initial_Quantity,  movedArea.Id];
+        const updateQuery = 'UPDATE crop_read_moved_area SET Crop_UID = ?, Current_Quantity = ?, Area_UID = ?, Name = ?, Initial_Quantity = ?, Transition_Time = ?, Remaining_Days = ?  WHERE ID = ?';
+        const updateData = [movedArea.Crop_UID, movedArea.Current_Quantity, movedArea.Area_UID, movedArea.Name, movedArea.Initial_Quantity,  movedArea.Transition_Time, movedArea.Remaining_Days, movedArea.Id];
 
         connection.query(updateQuery, updateData, (err, res) => {
             if (err) {

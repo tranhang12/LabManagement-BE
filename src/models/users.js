@@ -2,12 +2,12 @@ const connection = require('../config/dbConnection');
 
 class User {
     constructor(user) {
-        this.User_Name = user.userName;
-        this.User_Password = user.password;
-        this.Full_Name = user.fullName;
-        this.Phone_Number = user.phoneNumber;
+        this.User_Name = user.User_Name;
+        this.User_Password = user.User_Password;
+        this.Full_Name = user.Full_Name;
+        this.Phone_Number = user.Phone_Number;
         this.Email = user.email;
-        this.Is_Admin = user.isAdmin;
+        this.Is_Admin = user.Is_Admin;
     }
 
     static signUp(user, result) {
@@ -21,27 +21,27 @@ class User {
         });
     }
 
-    // static findByUsername(username, result) {
-    //     connection.query('SELECT * FROM users WHERE User_Name = ?', [username], (err, res) => {
-    //         if (err) {
-    //             console.log('error: ', err);
-    //             result(err, null);
-    //         } else {
-    //             result(null, res[0]);
-    //         }
-    //     });
-    // }
+    static findByUsername(User_Name, result) {
+        connection.query('SELECT * FROM users WHERE User_Name = ?', [User_Name], (err, res) => {
+            if (err) {
+                console.log('error: ', err);
+                result(err, null);
+            } else {
+                result(null, res[0]);
+            }
+        });
+    }
 
-    static async findByUsername(username) {
-        try {
-          const rows = await connection.query('SELECT * FROM users WHERE User_Name = ?', [username]);
-          return rows[0];
-        } catch (error) {
-          console.log('error: ', error);
-          throw error;
-        }
-      }
-      
+    // static async findByUsername(username) {
+    //     try {
+    //       const rows = await connection.query('SELECT * FROM users WHERE User_Name = ?', [username]);
+    //       return rows[0];
+    //     } catch (error) {
+    //       console.log('error: ', error);
+    //       throw error;
+    //     }
+    //   }
+          
 
     static findById(id, result) {
         connection.query('SELECT * FROM users WHERE User_ID = ?', [id], (err, res) => {
