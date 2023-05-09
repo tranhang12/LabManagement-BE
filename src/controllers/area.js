@@ -1,7 +1,7 @@
 const Area = require("../models/area");
 const encryption = require("../helper/encryption");
 const auth = require("basic-auth");
-
+const dbConnection = require('../config/dbConnection');
 exports.getAllAreas = (req, res) => {
   try {
     Area.findAll((err, result) => {
@@ -231,4 +231,30 @@ exports.deleteArea = (req, res) => {
         error.message,
     });
   }
+};
+
+exports.getAreasWithCulturePlan = (req, res) => {
+  const query = `
+    SELECT DISTINCT a.*
+    FROM area a
+    JOIN culture_plan cp ON a.Area_Name = cp.Area;
+  `;
+  dbConnection.query(query, (err, results) => {
+    if (err) {
+      return res.status(500).json({ error: err.message });
+    }
+    res.status(200).json(results);
+  });
+};
+
+exports.getAllAreas = (req, res) => {
+const query = `
+  SELECT * FROM area;
+`;
+dbConnection.query(query, (err, results) => {
+  if (err) {
+    return res.status(500).json({ error: err.message });
+  }
+  res.status(200).json(results);
+});
 };

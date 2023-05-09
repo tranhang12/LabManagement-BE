@@ -9,4 +9,6 @@ router.post('/area', areaController.addArea);
 router.put('/area/:Id', areaController.updateArea);
 
 router.delete('/area/:Id', areaController.deleteArea);
- module.exports = router;
+router.get("/areas-with-culture-plan", areaController.getAreasWithCulturePlan);
+router.get("/all-areas", areaController.getAllAreas);
+module.exports = router;
