@@ -6,7 +6,7 @@ const moveCrop = async (req, res) => {
 
   try {
     const query = `
-      INSERT INTO crop_read_moved_area (Crop_UID, Area_Name, Initial_Quantity, Current_Quantity, Created_Date, Transition_Time, Remaining_Days)
+      INSERT INTO culture_plan_moved_area (Crop_UID, Area_Name, Initial_Quantity, Current_Quantity, Created_Date, Transition_Time, Remaining_Days)
       VALUES (?, ?, ?, ?, NOW(), ?, ?);
     `;
     await movedAreaDbConnection.query(query, [Culture_Plan_ID, Area_Name, Initial_Quantity, Current_Quantity, Transition_Time, Remaining_Days]);
