@@ -25,14 +25,14 @@ DROP TABLE IF EXISTS `area`;
 CREATE TABLE `area` (
   `Area_ID` int NOT NULL AUTO_INCREMENT,
   `Area_Name` varchar(100) NOT NULL,
-  `Area_Size` varchar(100) NOT NULL,
+  `Area_Size` int NOT NULL,
   `Area_Unit` varchar(10) DEFAULT NULL,
   `Area_Type` varchar(50) DEFAULT NULL,
   `Area_Locations` varchar(50) DEFAULT NULL,
   `Quantity` int DEFAULT NULL,
   PRIMARY KEY (`Area_ID`),
   UNIQUE KEY `Area_Name` (`Area_Name`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -41,99 +41,8 @@ CREATE TABLE `area` (
 
 LOCK TABLES `area` WRITE;
 /*!40000 ALTER TABLE `area` DISABLE KEYS */;
-INSERT INTO `area` VALUES (3,'Lab 01','20','m2','Phòng cấy mô','Tầng 2 nhà A4',NULL),(4,'Lab 02','30','m2','Phòng cấy mô','Tầng 3 nhà A4',NULL),(5,'Tissue culture room 01','40','m2','Phòng nuôi mô','Tầng 1 nhà B2',NULL),(6,'Tissue culture room 02','40','m2','Phòng nuôi mô','Tầng 1 nhà B2',NULL);
+INSERT INTO `area` VALUES (3,'Lab 01',20,'m2','Tissue culture laboratory','Tầng 2 nhà A4',100),(4,'Lab 02',30,'m2','Tissue culture laboratory','Tầng 3 nhà A4',200),(5,'Tissue culture room 01',40,'m2','Tissue culture room','Tầng 1 nhà B2',300),(6,'Tissue culture room 02',40,'m2','Tissue culture room','Tầng 1 nhà B2',400),(8,'Lab 03',50,'m2','Tissue culture room','Home at Me',0),(9,'Lab 04',25,'m2','Tissue culture laboratory','Nhà A2',0);
 /*!40000 ALTER TABLE `area` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `crop_read_harvested_storage`
---
-
-DROP TABLE IF EXISTS `crop_read_harvested_storage`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `crop_read_harvested_storage` (
-  `ID` int NOT NULL AUTO_INCREMENT,
-  `Crop_UID` int DEFAULT NULL,
-  `Quantity` int DEFAULT NULL,
-  `Produced_Quantity` float DEFAULT NULL,
-  `Source_Area_Name` varchar(255) DEFAULT NULL,
-  `Created_Date` datetime DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`ID`),
-  KEY `crop_read_harvested_storage_FK` (`Crop_UID`),
-  CONSTRAINT `crop_read_harvested_storage_FK` FOREIGN KEY (`Crop_UID`) REFERENCES `culture_plan` (`Culture_Plan_ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `crop_read_harvested_storage`
---
-
-LOCK TABLES `crop_read_harvested_storage` WRITE;
-/*!40000 ALTER TABLE `crop_read_harvested_storage` DISABLE KEYS */;
-INSERT INTO `crop_read_harvested_storage` VALUES (1,NULL,2,2,'Lab 01','2023-05-03 22:24:41'),(2,53,NULL,NULL,'Lab 01','2023-05-03 22:26:48'),(3,45,NULL,NULL,'Lab 01','2023-05-03 22:40:31');
-/*!40000 ALTER TABLE `crop_read_harvested_storage` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `crop_read_moved_area`
---
-
-DROP TABLE IF EXISTS `crop_read_moved_area`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `crop_read_moved_area` (
-  `ID` int NOT NULL AUTO_INCREMENT,
-  `Crop_UID` int DEFAULT NULL,
-  `Name` varchar(255) DEFAULT NULL,
-  `Initial_Quantity` int DEFAULT NULL,
-  `Current_Quantity` int DEFAULT NULL,
-  `Created_Date` datetime DEFAULT CURRENT_TIMESTAMP,
-  `Transition_Time` datetime DEFAULT NULL,
-  `Remaining_Days` int DEFAULT '0',
-  PRIMARY KEY (`ID`),
-  KEY `crop_read_moved_area_FK` (`Crop_UID`),
-  CONSTRAINT `crop_read_moved_area_FK` FOREIGN KEY (`Crop_UID`) REFERENCES `culture_plan` (`Culture_Plan_ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `crop_read_moved_area`
---
-
-LOCK TABLES `crop_read_moved_area` WRITE;
-/*!40000 ALTER TABLE `crop_read_moved_area` DISABLE KEYS */;
-INSERT INTO `crop_read_moved_area` VALUES (10,50,'Lab 01',5,2,'2023-05-03 22:11:00','2018-04-23 00:00:00',0);
-/*!40000 ALTER TABLE `crop_read_moved_area` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `crop_read_trash`
---
-
-DROP TABLE IF EXISTS `crop_read_trash`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `crop_read_trash` (
-  `ID` int NOT NULL AUTO_INCREMENT,
-  `Crop_UID` int DEFAULT NULL,
-  `Quantity` int DEFAULT NULL,
-  `Source_Area_Name` varchar(255) DEFAULT NULL,
-  `Created_Date` datetime DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`ID`),
-  KEY `crop_read_trash_FK` (`Crop_UID`),
-  CONSTRAINT `crop_read_trash_FK` FOREIGN KEY (`Crop_UID`) REFERENCES `culture_plan` (`Culture_Plan_ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `crop_read_trash`
---
-
-LOCK TABLES `crop_read_trash` WRITE;
-/*!40000 ALTER TABLE `crop_read_trash` DISABLE KEYS */;
-INSERT INTO `crop_read_trash` VALUES (1,51,NULL,'Lab 01','2023-05-03 22:23:38'),(2,45,NULL,'Lab 01','2023-05-03 22:41:16'),(3,45,NULL,'Lab 01','2023-05-03 22:41:25'),(4,45,NULL,'Lab 01','2023-05-03 22:42:01');
-/*!40000 ALTER TABLE `crop_read_trash` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -232,7 +141,6 @@ CREATE TABLE `culture_plan` (
   `Activity_Type` varchar(50) NOT NULL,
   `Area` varchar(100) NOT NULL,
   `Plant_Type` varchar(100) NOT NULL,
-  `Crop_Type` varchar(100) NOT NULL,
   `Container_Quantity` varchar(50) NOT NULL,
   `Container_Type` varchar(50) NOT NULL,
   `Transition_Time` date NOT NULL,
@@ -241,10 +149,10 @@ CREATE TABLE `culture_plan` (
   `Task_ID` int DEFAULT NULL,
   `Created_Date` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `Status` varchar(100) DEFAULT NULL,
-  `INITIAL_AREA_CURRENT_QUANTITY` int DEFAULT '0',
-  `INITIAL_AREA_INITIAL_QUANTITY` int DEFAULT '0',
-  `INITIAL_AREA_NAME` varchar(100) DEFAULT NULL,
+  `Current_Quantity` int DEFAULT '0',
+  `Initial_Quantity` int DEFAULT '0',
   `Remaining_Days` int DEFAULT '0',
+  `last_updated` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`Culture_Plan_ID`),
   KEY `culture_plan_FK` (`Area`),
   KEY `culture_plan_FK_1` (`Source_Area`),
@@ -252,7 +160,7 @@ CREATE TABLE `culture_plan` (
   CONSTRAINT `culture_plan_FK` FOREIGN KEY (`Area`) REFERENCES `area` (`Area_Name`),
   CONSTRAINT `culture_plan_FK_1` FOREIGN KEY (`Source_Area`) REFERENCES `area` (`Area_Name`),
   CONSTRAINT `culture_plan_FK_3` FOREIGN KEY (`Task_ID`) REFERENCES `tasks` (`Task_ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=54 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=56 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -261,8 +169,100 @@ CREATE TABLE `culture_plan` (
 
 LOCK TABLES `culture_plan` WRITE;
 /*!40000 ALTER TABLE `culture_plan` DISABLE KEYS */;
-INSERT INTO `culture_plan` VALUES (6,'Nuôi cấy cây nha đam','Lab 01','Xương rồng','In vitro','10','Pots','0004-05-23','Lab 01',5,NULL,NULL,NULL,0,0,NULL,0),(7,'Test','Lab 01','Test','Test','Test','Large','2018-04-23','Lab 01',2,1,'2023-05-03 14:54:34','location change',0,0,NULL,0),(8,'Test','Lab 01','Test','Test','Test','Large','2018-04-23','Lab 01',2,1,'2023-05-03 14:57:08','location change',5,2,'Lab 01',0),(9,'Test','Lab 01','Test','Test','Test','Large','2018-04-23','Lab 01',2,1,'2023-05-03 16:07:14','location change',5,2,'Lab 01',0),(10,'Test','Lab 01','Test','Test','Test','Large','2018-04-23','Lab 01',2,1,'2023-05-03 16:10:39','location change',5,2,'Lab 01',0),(11,'Test','Lab 01','Test','Test','Test','Large','2018-04-23','Lab 01',2,1,'2023-05-03 16:11:52','location change',5,2,'Lab 01',0),(12,'Test','Lab 01','Test','Test','Test','Large','2018-04-23','Lab 01',2,1,'2023-05-03 16:12:01','location change',5,2,'Lab 01',0),(13,'Test','Lab 01','Test','Test','Test','Large','2018-04-23','Lab 01',2,1,'2023-05-03 16:12:33','location change',5,2,'Lab 01',0),(14,'Test','Lab 01','Test','Test','Test','Large','2018-04-23','Lab 01',2,1,'2023-05-03 16:12:44','location change',5,2,'Lab 01',0),(15,'Test','Lab 01','Test','Test','Test','Large','2018-04-23','Lab 01',2,1,'2023-05-03 16:13:18','location change',5,2,'Lab 01',0),(16,'Test','Lab 01','Test','Test','Test','Large','2018-04-23','Lab 01',2,1,'2023-05-03 16:14:09','location change',5,2,'Lab 01',0),(17,'Test','Lab 01','Test','Test','Test','Large','2018-04-23','Lab 01',2,1,'2023-05-03 16:14:45','location change',5,2,'Lab 01',0),(18,'Test','Lab 01','Test','Test','Test','Large','2018-04-23','Lab 01',2,1,'2023-05-03 16:15:20','location change',5,2,'Lab 01',0),(19,'Test','Lab 01','Test','Test','Test','Large','2018-04-23','Lab 01',2,1,'2023-05-03 16:15:44','location change',5,2,'Lab 01',0),(20,'Test','Lab 01','Test','Test','Test','Large','2018-04-23','Lab 01',2,1,'2023-05-03 16:30:01','location change',5,2,'Lab 01',0),(21,'Test','Lab 01','Test','Test','Test','Large','2018-04-23','Lab 01',2,1,'2023-05-03 16:30:36','location change',5,2,'Lab 01',0),(22,'Test','Lab 01','Test','Test','Test','Large','2018-04-23','Lab 01',2,1,'2023-05-03 16:30:52','location change',5,2,'Lab 01',0),(23,'Test','Lab 01','Test','Test','Test','Large','2018-04-23','Lab 01',2,1,'2023-05-03 16:31:27','location change',5,2,'Lab 01',0),(24,'Test','Lab 01','Test','Test','Test','Large','2018-04-23','Lab 01',2,1,'2023-05-03 16:31:41','location change',5,2,'Lab 01',0),(25,'Test','Lab 01','Test','Test','Test','Large','2018-04-23','Lab 01',2,1,'2023-05-03 16:33:02','location change',5,2,'Lab 01',0),(26,'Test','Lab 01','Test','Test','Test','Large','2018-04-23','Lab 01',2,1,'2023-05-03 16:33:45','location change',5,2,'Lab 01',0),(27,'Test','Lab 01','Test','Test','Test','Large','2018-04-23','Lab 01',2,1,'2023-05-03 16:35:07','location change',5,2,'Lab 01',0),(28,'Test','Lab 01','Test','Test','Test','Large','2018-04-23','Lab 01',2,1,'2023-05-03 16:36:00','location change',5,2,'Lab 01',0),(29,'Test','Lab 01','Test','Test','Test','Large','2018-04-23','Lab 01',2,1,'2023-05-03 16:39:04','location change',5,2,'Lab 01',0),(30,'Test','Lab 01','Test','Test','Test','Large','2018-04-23','Lab 01',2,1,'2023-05-03 16:39:47','location change',5,2,'Lab 01',0),(31,'Test','Lab 01','Test','Test','Test','Large','2018-04-23','Lab 01',2,1,'2023-05-03 16:40:16','location change',5,2,'Lab 01',0),(32,'Test','Lab 01','Test','Test','Test','Large','2018-04-23','Lab 01',2,1,'2023-05-03 16:40:29','location change',5,2,'Lab 01',0),(33,'Test','Lab 01','Test','Test','Test','Large','2018-04-23','Lab 01',2,1,'2023-05-03 16:55:47','location change',5,2,'Lab 01',0),(34,'Test','Lab 01','Test','Test','Test','Large','2018-04-23','Lab 01',2,1,'2023-05-03 16:56:01','location change',5,2,'Lab 01',0),(35,'Test','Lab 01','Test','Test','Test','Large','2018-04-23','Lab 01',2,1,'2023-05-03 16:56:29','location change',5,2,'Lab 01',0),(36,'Test','Lab 01','Test','Test','Test','Large','2018-04-23','Lab 01',2,1,'2023-05-03 16:56:39','location change',5,2,'Lab 01',0),(37,'Test','Lab 01','Test','Test','Test','Large','2018-04-23','Lab 01',2,1,'2023-05-03 16:59:12','location change',5,2,'Lab 01',0),(38,'Test','Lab 01','Test','Test','Test','Large','2018-04-23','Lab 01',2,1,'2023-05-03 16:59:52','location change',5,2,'Lab 01',0),(39,'Test','Lab 01','Test','Test','Test','Large','2018-04-23','Lab 01',2,1,'2023-05-03 17:02:47','location change',5,2,'Lab 01',0),(40,'Test','Lab 01','Test','Test','Test','Large','2018-04-23','Lab 01',2,1,'2023-05-03 17:03:00','location change',5,2,'Lab 01',0),(41,'Test','Lab 01','Test','Test','Test','Large','2018-04-23','Lab 01',2,1,'2023-05-03 17:04:20','location change',5,2,'Lab 01',0),(42,'Test','Lab 01','Test','Test','Test','Large','2018-04-23','Lab 01',2,1,'2023-05-03 17:04:45','location change',5,2,'Lab 01',0),(43,'Test','Lab 01','Test','Test','Test','Large','2018-04-23','Lab 01',2,1,'2023-05-03 17:05:04','location change',5,2,'Lab 01',0),(44,'Test','Lab 01','Test','Test','Test','Large','2018-04-23','Lab 01',2,1,'2023-05-03 17:07:36','location change',5,2,'Lab 01',0),(45,'Test','Lab 01','Test','Test','Test','Large','2018-04-23','Lab 01',2,1,'2023-05-03 17:08:02','delete',5,2,'Lab 01',0),(46,'Test','Lab 01','Test','Test','Test','Large','2018-04-23','Lab 01',2,1,'2023-05-03 17:08:36','location change',5,2,'Lab 01',0),(47,'Test','Lab 01','Test','Test','Test','Large','2018-04-23','Lab 01',2,1,'2023-05-03 17:08:59','location change',5,2,'Lab 01',0),(48,'Test','Lab 01','Test','Test','Test','Large','2018-04-23','Lab 01',2,1,'2023-05-03 17:09:10','location change',5,2,'Lab 01',0),(49,'Test','Lab 01','Test','Test','Test','Large','2018-04-23','Lab 01',2,1,'2023-05-03 17:10:44','location change',5,2,'Lab 01',0),(50,'Test','Lab 01','Test','Test','Test','Large','2018-04-23','Lab 01',2,1,'2023-05-03 17:11:00','location change',5,2,'Lab 01',0),(51,'Test','Lab 01','Test','Test','Test','Large','2018-04-23','Lab 01',2,1,'2023-05-03 17:23:38','delete',5,2,'Lab 01',0),(52,'Test','Lab 01','Test','Test','Test','Large','2018-04-23','Lab 01',2,1,'2023-05-03 17:24:41','harvest',5,2,'Lab 01',0),(53,'Test','Lab 01','Test','Test','Test','Large','2018-04-23','Lab 01',2,1,'2023-05-03 17:26:48','harvest',5,2,'Lab 01',0);
+INSERT INTO `culture_plan` VALUES (6,'Nuôi cấy cây nha đam','Lab 01','Xương rồng','10','Pots','0004-05-23','Lab 01',5,NULL,NULL,NULL,0,0,0,'2023-05-08 14:05:45'),(45,'Test','Lab 01','Test','Test','Large','2018-04-23','Lab 01',2,1,'2023-05-03 17:08:02','delete',5,2,0,'2023-05-08 14:05:45'),(46,'Test','Lab 01','Test','Test','Large','2018-04-23','Lab 01',2,1,'2023-05-03 17:08:36','location change',5,2,0,'2023-05-08 14:05:45'),(47,'Test','Lab 01','Test','Test','Large','2018-04-23','Lab 01',2,1,'2023-05-03 17:08:59','location change',5,2,0,'2023-05-08 14:05:45'),(48,'Test','Lab 01','Test','Test','Large','2018-04-23','Lab 01',2,1,'2023-05-03 17:09:10','location change',5,2,0,'2023-05-08 14:05:45'),(49,'Test','Lab 01','Test','Test','Large','2018-04-23','Lab 01',2,1,'2023-05-03 17:10:44','location change',5,2,0,'2023-05-08 14:05:45'),(50,'Test','Lab 01','Test','Test','Large','2018-04-23','Lab 01',2,1,'2023-05-03 17:11:00','location change',5,2,0,'2023-05-08 14:05:45'),(51,'Test','Lab 01','Test','Test','Large','2018-04-23','Lab 01',2,1,'2023-05-03 17:23:38','delete',5,2,0,'2023-05-08 14:05:45'),(52,'Test','Lab 01','Test','Test','Large','2018-04-23','Lab 01',2,1,'2023-05-03 17:24:41','harvest',5,2,0,'2023-05-08 14:05:45'),(53,'Test','Lab 01','Test','Test','Large','2018-04-23','Lab 01',2,1,'2023-05-03 17:26:48','harvest',5,2,0,'2023-05-08 14:05:45'),(54,'Thử nghiệm','Lab 01','Test','Test','Large','2018-04-23','Lab 01',10,1,'2023-05-03 18:45:47','location change',5,2,1,'2023-05-08 14:05:45'),(55,'Test 1','Lab 01','Test 1','20','Pots','2023-12-23','Lab 01',5,NULL,'2023-05-08 03:25:33',NULL,5,5,5,'2023-05-08 14:05:45');
 /*!40000 ALTER TABLE `culture_plan` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `culture_plan_harvested_storage`
+--
+
+DROP TABLE IF EXISTS `culture_plan_harvested_storage`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `culture_plan_harvested_storage` (
+  `ID` int NOT NULL AUTO_INCREMENT,
+  `Culture_Plan_ID` int DEFAULT NULL,
+  `Quantity` int DEFAULT NULL,
+  `Produced_Quantity` float DEFAULT NULL,
+  `Source_Area_Name` varchar(255) DEFAULT NULL,
+  `Created_Date` datetime DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`ID`),
+  KEY `crop_read_harvested_storage_FK` (`Culture_Plan_ID`),
+  CONSTRAINT `crop_read_harvested_storage_FK` FOREIGN KEY (`Culture_Plan_ID`) REFERENCES `culture_plan` (`Culture_Plan_ID`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `culture_plan_harvested_storage`
+--
+
+LOCK TABLES `culture_plan_harvested_storage` WRITE;
+/*!40000 ALTER TABLE `culture_plan_harvested_storage` DISABLE KEYS */;
+INSERT INTO `culture_plan_harvested_storage` VALUES (1,NULL,2,2,'Lab 01','2023-05-03 22:24:41'),(2,53,NULL,NULL,'Lab 01','2023-05-03 22:26:48'),(3,45,NULL,NULL,'Lab 01','2023-05-03 22:40:31');
+/*!40000 ALTER TABLE `culture_plan_harvested_storage` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `culture_plan_moved_area`
+--
+
+DROP TABLE IF EXISTS `culture_plan_moved_area`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `culture_plan_moved_area` (
+  `ID` int NOT NULL AUTO_INCREMENT,
+  `Culture_Plan_ID` int DEFAULT NULL,
+  `Area_Name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `Initial_Quantity` int DEFAULT NULL,
+  `Current_Quantity` int DEFAULT NULL,
+  `Created_Date` datetime DEFAULT CURRENT_TIMESTAMP,
+  `Transition_Time` datetime DEFAULT NULL,
+  `Remaining_Days` int DEFAULT '0',
+  `last_updated` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`ID`),
+  KEY `crop_read_moved_area_FK` (`Culture_Plan_ID`),
+  CONSTRAINT `crop_read_moved_area_FK` FOREIGN KEY (`Culture_Plan_ID`) REFERENCES `culture_plan` (`Culture_Plan_ID`)
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `culture_plan_moved_area`
+--
+
+LOCK TABLES `culture_plan_moved_area` WRITE;
+/*!40000 ALTER TABLE `culture_plan_moved_area` DISABLE KEYS */;
+INSERT INTO `culture_plan_moved_area` VALUES (10,50,'Lab 01',5,2,'2023-05-03 22:11:00','2018-04-23 00:00:00',0,'2023-05-08 14:06:05'),(11,54,'Lab 01',5,2,'2023-05-04 01:45:47','2018-04-23 00:00:00',1,'2023-05-08 14:06:05'),(12,6,'Lab 02',50,50,'2023-05-04 03:01:25','2023-05-10 00:00:00',6,'2023-05-08 14:06:05'),(13,45,'Tissue culture room 01',110,110,'2023-05-04 08:15:02','2023-05-10 00:00:00',6,'2023-05-08 14:06:05'),(14,45,'Tissue culture room 02',110,110,'2023-05-04 14:00:30','2023-05-10 00:00:00',10,'2023-05-08 14:06:05');
+/*!40000 ALTER TABLE `culture_plan_moved_area` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `culture_plan_trash`
+--
+
+DROP TABLE IF EXISTS `culture_plan_trash`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `culture_plan_trash` (
+  `ID` int NOT NULL AUTO_INCREMENT,
+  `Culture_Plan_ID` int DEFAULT NULL,
+  `Quantity` int DEFAULT NULL,
+  `Source_Area_Name` varchar(255) DEFAULT NULL,
+  `Created_Date` datetime DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`ID`),
+  KEY `crop_read_trash_FK` (`Culture_Plan_ID`),
+  CONSTRAINT `crop_read_trash_FK` FOREIGN KEY (`Culture_Plan_ID`) REFERENCES `culture_plan` (`Culture_Plan_ID`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `culture_plan_trash`
+--
+
+LOCK TABLES `culture_plan_trash` WRITE;
+/*!40000 ALTER TABLE `culture_plan_trash` DISABLE KEYS */;
+INSERT INTO `culture_plan_trash` VALUES (1,51,NULL,'Lab 01','2023-05-03 22:23:38'),(2,45,NULL,'Lab 01','2023-05-03 22:41:16'),(3,45,NULL,'Lab 01','2023-05-03 22:41:25'),(4,45,NULL,'Lab 01','2023-05-03 22:42:01');
+/*!40000 ALTER TABLE `culture_plan_trash` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -312,9 +312,9 @@ CREATE TABLE `material` (
   `Quantity` int NOT NULL,
   `Additional_Notes` text,
   `Unit` varchar(100) DEFAULT NULL,
-  `expiration_date` date DEFAULT NULL,
+  `Expiration_Date` date DEFAULT NULL,
   PRIMARY KEY (`Material_ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=36 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=43 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -323,8 +323,38 @@ CREATE TABLE `material` (
 
 LOCK TABLES `material` WRITE;
 /*!40000 ALTER TABLE `material` DISABLE KEYS */;
-INSERT INTO `material` VALUES (20,'Culture Media','DMEM',50.00,'Sigma-Aldrich',500,'Store at 4°C','mL','2024-06-30'),(21,'Culture Media','RPMI 1640',45.00,'Thermo Fisher',500,'Store at 4°C','mL','2024-09-15'),(22,'Buffering Agent','HEPES',30.00,'Sigma-Aldrich',100,'Store at room temperature','g','2024-11-20'),(23,'Buffering Agent','Tris',25.00,'Sigma-Aldrich',100,'Store at room temperature','g','2025-01-10'),(24,'Supplement','Fetal Bovine Serum (FBS)',150.00,'Thermo Fisher',500,'Store at -20°C','mL','2024-03-12'),(25,'Supplement','Bovine Serum Albumin (BSA)',60.00,'Sigma-Aldrich',100,'Store at 4°C','g','2024-12-25'),(26,'Growth Factor','Epidermal Growth Factor (EGF)',200.00,'Thermo Fisher',10,'Store at -20°C','µg','2024-08-18'),(27,'Growth Factor','Fibroblast Growth Factor (FGF)',250.00,'Sigma-Aldrich',10,'Store at -20°C','µg','2024-10-05'),(28,'Antibiotic','Penicillin-Streptomycin',40.00,'Thermo Fisher',100,'Store at -20°C','mL','2024-08-08'),(29,'Antifungal','Amphotericin B',80.00,'Sigma-Aldrich',20,'Store at 4°C','mL','2024-02-14'),(30,'Solidifying Agent','Gelatin',20.00,'Sigma-Aldrich',500,'Store at room temperature','g','2024-07-19'),(31,'Solidifying Agent','Agar',60.00,'Thermo Fisher',500,'Store at room temperature','g','2025-03-10'),(32,'Vessel','T75 Flask',5.00,'Corning',1,'Sterile, single-use','item','2024-02-14'),(33,'Vessel','6-well Plate',3.00,'Corning',1,'Sterile, single-use','item','2024-09-02'),(34,'Vessel','15 mL Centrifuge Tube',0.50,'Eppendorf',1,'Sterile, single-use','item','2024-05-14'),(35,'Vessel','1.5 mL Eppendorf Tube',0.10,'Eppendorf',1,'Sterile, single-use','item','2024-02-18');
+INSERT INTO `material` VALUES (22,'Buffering Agent','HEPES',30.00,'Sigma-Aldrich',100,'Store at room temperature','g','2024-11-20'),(23,'Buffering Agent','Tris',25.00,'Sigma-Aldrich',100,'Store at room temperature','g','2025-01-10'),(24,'Supplement','Fetal Bovine Serum (FBS)',150.00,'Thermo Fisher',500,'Store at -20°C','mL','2023-05-23'),(25,'Agrochemical','Bovine Serum Albumin (BSA)',60.00,'Sigma-Aldrich',100,'Store at 4°C','g','2023-06-08'),(26,'Growth Factor','Epidermal Growth Factor (EGF)',200.00,'Thermo Fisher',10,'Store at -20°C','µg','2024-08-18'),(27,'Growth Factor','Fibroblast Growth Factor (FGF)',250.00,'Sigma-Aldrich',10,'Store at -20°C','µg','2024-10-05'),(28,'Antibiotic','Penicillin-Streptomycin',40.00,'Thermo Fisher',100,'Store at -20°C','mL','2024-08-08'),(29,'Antifungal','Amphotericin B',80.00,'Sigma-Aldrich',20,'Store at 4°C','mL','2024-02-14'),(30,'Solidifying Agent','Gelatin',20.00,'Sigma-Aldrich',500,'Store at room temperature','g','2024-07-19'),(31,'Solidifying Agent','Agar',60.00,'Thermo Fisher',500,'Store at room temperature','g','2025-03-10'),(32,'Vessel','T75 Flask',5.00,'Corning',1,'Sterile, single-use','item','2024-02-14'),(33,'Vessel','6-well Plate',3.00,'Corning',1,'Sterile, single-use','item','2024-09-02'),(34,'Vessel','15 mL Centrifuge Tube',0.50,'Eppendorf',1,'Sterile, single-use','item','2024-05-14'),(35,'Vessel','1.5 mL Eppendorf Tube',0.10,'Eppendorf',1,'Sterile, single-use','item','2024-02-18'),(36,'Agrochemical','DCMe',10.00,'Hanava',30,'Nothing','Kg','2023-05-26');
 /*!40000 ALTER TABLE `material` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `notifications`
+--
+
+DROP TABLE IF EXISTS `notifications`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `notifications` (
+  `Notification_ID` int NOT NULL AUTO_INCREMENT,
+  `Task_ID` int NOT NULL,
+  `Assigned_To` varchar(50) NOT NULL,
+  `Message` varchar(255) NOT NULL,
+  `Is_Read` tinyint(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`Notification_ID`),
+  KEY `notifications_FK` (`Assigned_To`),
+  KEY `notifications_FK_Task` (`Task_ID`),
+  CONSTRAINT `notifications_FK` FOREIGN KEY (`Assigned_To`) REFERENCES `users` (`User_Name`),
+  CONSTRAINT `notifications_FK_Task` FOREIGN KEY (`Task_ID`) REFERENCES `tasks` (`Task_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `notifications`
+--
+
+LOCK TABLES `notifications` WRITE;
+/*!40000 ALTER TABLE `notifications` DISABLE KEYS */;
+/*!40000 ALTER TABLE `notifications` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -341,7 +371,7 @@ CREATE TABLE `plant` (
   `Plant_Description` text,
   `Image` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`Plant_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -350,6 +380,7 @@ CREATE TABLE `plant` (
 
 LOCK TABLES `plant` WRITE;
 /*!40000 ALTER TABLE `plant` DISABLE KEYS */;
+INSERT INTO `plant` VALUES (1,'Cây nha đam','Aloe vera','Cây nha đam là một loài cây lâu năm với nhiều công dụng trong y học và làm đẹp, được trồng phổ biến ở các vùng khí hậu ấm.',NULL),(2,'Cây măng tây','Asparagus officinalis','Cây măng tây là một loại rau xanh phổ biến được trồng và sử dụng trong nhiều món ăn trên toàn thế giới.',NULL),(3,'Rose','Rosa','Roses are a type of flowering shrub.',NULL),(4,'Tulip','Tulipa','Tulips are perennial, bulbous plants with showy flowers.',NULL),(5,'Sunflower','Helianthus','Sunflowers are usually tall annual or perennial plants.',NULL),(6,'Orchid','Orchidaceae','Orchids are a diverse and widespread family of flowering plants.',NULL),(7,'Daisy','Bellis perennis','Daisies are small perennial plants with a symmetrical flower.',NULL),(8,'Lily','Lilium','Lilies are herbaceous flowering plants growing from bulbs.',NULL),(9,'Daffodil','Narcissus','Daffodils are predominantly spring perennial plants with yellow flowers.',NULL),(10,'Violet','Viola','Violets are flowering plants with heart-shaped leaves.',NULL);
 /*!40000 ALTER TABLE `plant` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -372,7 +403,7 @@ CREATE TABLE `tasks` (
   PRIMARY KEY (`Task_ID`),
   KEY `tasks_FK` (`Assigned_To`),
   CONSTRAINT `tasks_FK` FOREIGN KEY (`Assigned_To`) REFERENCES `users` (`User_Name`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -381,7 +412,7 @@ CREATE TABLE `tasks` (
 
 LOCK TABLES `tasks` WRITE;
 /*!40000 ALTER TABLE `tasks` DISABLE KEYS */;
-INSERT INTO `tasks` VALUES (1,'Test','Test','Test','High','2030-04-23','Active','MinMin123');
+INSERT INTO `tasks` VALUES (1,'Test','Test','Test','High','2030-04-23','Active','MinMin123'),(2,'sanitation','Schedule regular cleaning tasks.','Ensure that all areas are cleaned on a regular basis, including floors, countertops, and equipment. Use appropriate cleaning solutions and follow proper procedures to maintain a sanitary environment. Dispose of waste materials properly and restock necessary supplies when needed.','normal','2021-07-22','Incomplete','tranhang12'),(3,'sanitation','Perform equipment maintenance.','Regularly inspect and maintain equipment to ensure it is in good working condition. Replace worn or damaged parts as needed and perform routine maintenance tasks according to the manufacturer\'s recommendations.','normal','2021-07-22','Incomplete','tranhang123'),(4,'reservoir','Monitor water quality in the reservoir.','Regularly test the water quality in the reservoir to ensure it meets required standards. Perform necessary treatments to maintain water quality and monitor for any potential issues or contaminants.','normal','2021-07-20','Incomplete','tranhang1234'),(5,'safety','Conduct safety inspections.','Perform regular safety inspections of the facilities and equipment to identify and address any potential hazards. Ensure that all safety protocols are being followed and that employees are properly trained in emergency procedures.','urgent','2021-07-20','Incomplete',NULL),(6,'general','Hold team meetings.','Schedule regular team meetings to discuss ongoing projects, address any concerns, and plan for future tasks. Encourage open communication and collaboration among team members to ensure the smooth operation of the organization.','normal','2021-03-30','Incomplete',NULL);
 /*!40000 ALTER TABLE `tasks` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -430,7 +461,7 @@ CREATE TABLE `users` (
   `email` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`User_ID`),
   UNIQUE KEY `User_Name` (`User_Name`)
-) ENGINE=InnoDB AUTO_INCREMENT=71 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=72 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -439,7 +470,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (19,'tranhang12','$2b$10$2EkuXuv3LCbT06SuwocUuu/6GVAm1vLN97n7AjmX0ZZlJoRkMeBee','Tran Thi Hang','09837812498',1,'tranhang12@gmail.com'),(21,'tranhang123','$2b$10$A3X0QGt1Gt85fxJbXKepLOXmNHEiAKCJSYeP4h1OeIupZ1nXPdi5q','Hang Tran','0892374892',0,'tranhang13@gmail.com'),(25,'caominh25','$2b$10$nbupU97fA4BCC.kRG2u35eyCAiALu2AYtw0SVBgZiBd0t89w0Kw9e','Minh Cao','09238497312',1,'tranhang14@gmail.com'),(26,'MinMin123','$2b$10$A4dUIqMiVyLZFa3FVgiULeHSDwWxokFSSFkxkTuq8/l2UCUKjUBUq','Cao Minh','0834897355',1,'tranhang15@gmail.com'),(33,'Minmin12','$2b$10$neMgpz4eFAaIiU0jHA.7weFIRGRC/tF6bUn0tJpI8rSz.Gd8Rt5BG','Dương Ngọc Minh','098236578124',0,'tranhang17@gmail.com'),(35,'ThaoVy_2023','$2b$10$PFXjLUI4KE5BBw7ViDgphegV24iWmhyRLdF.MifRt/Mf0je/6sx2W','Thảo Vy','098236578124',0,'tranhang18@gmail.com'),(36,'tranhang1234','$2b$10$M1T6iug/vt95vfi.pvXkeeQ2YKzgY12EOioRmacY352g0lcQ5dNdK','Trần Thị Hằng','039297597654',0,'tranhang19@gmail.com');
+INSERT INTO `users` VALUES (19,'tranhang12','$2b$10$2EkuXuv3LCbT06SuwocUuu/6GVAm1vLN97n7AjmX0ZZlJoRkMeBee','Tran Thi Hang','09837812498',1,'tranhang12@gmail.com'),(21,'tranhang123','$2b$10$A3X0QGt1Gt85fxJbXKepLOXmNHEiAKCJSYeP4h1OeIupZ1nXPdi5q','Hang Tran','0892374892',0,'tranhang13@gmail.com'),(25,'caominh25','$2b$10$nbupU97fA4BCC.kRG2u35eyCAiALu2AYtw0SVBgZiBd0t89w0Kw9e','Minh Cao','09238497312',1,'tranhang14@gmail.com'),(26,'MinMin123','$2b$10$A4dUIqMiVyLZFa3FVgiULeHSDwWxokFSSFkxkTuq8/l2UCUKjUBUq','Cao Minh','0834897355',1,'tranhang15@gmail.com'),(33,'Minmin12','$2b$10$neMgpz4eFAaIiU0jHA.7weFIRGRC/tF6bUn0tJpI8rSz.Gd8Rt5BG','Dương Ngọc Minh','098236578124',0,'tranhang17@gmail.com'),(35,'ThaoVy_2023','$2b$10$PFXjLUI4KE5BBw7ViDgphegV24iWmhyRLdF.MifRt/Mf0je/6sx2W','Thảo Vy','098236578124',0,'tranhang18@gmail.com'),(36,'tranhang1234','$2b$10$M1T6iug/vt95vfi.pvXkeeQ2YKzgY12EOioRmacY352g0lcQ5dNdK','Trần Thị Hằng','039297597654',0,'tranhang19@gmail.com'),(71,'admin123','$2b$10$cHZjGzTz2/w2EMJ7v9q4i../StWNXO6lLbMSEneLbA9YflQGqFmha','Trần Thị Hằng','03929759765',1,'tranhangsocute12@gmail.com');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -456,4 +487,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-05-03 22:44:59
+-- Dump completed on 2023-05-10 10:28:42
