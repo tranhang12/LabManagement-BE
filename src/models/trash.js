@@ -9,7 +9,7 @@ class Trash {
   }
 
   static findAll(result) {
-    connection.query("SELECT * FROM crop_read_trash", (err, res) => {
+    connection.query("SELECT * FROM culture_plan_trash", (err, res) => {
       if (err) {
         console.log("error: ", err);
         result(err, null);
@@ -20,7 +20,7 @@ class Trash {
   }
 
   // static findById(Id, result) {
-  //     connection.query('SELECT * FROM crop_read_harvested_storage WHERE trash_ID = ?', [Id], (err, res) => {
+  //     connection.query('SELECT * FROM culture_plan_harvested_storage WHERE trash_ID = ?', [Id], (err, res) => {
   //         if (err) {
   //             console.log('error: ', err);
   //             result(err, null);
@@ -31,7 +31,7 @@ class Trash {
   // }
 
   static createtrash(trash, result) {
-    connection.query("INSERT INTO crop_read_trash SET ?", trash, (err, res) => {
+    connection.query("INSERT INTO culture_plan_trash SET ?", trash, (err, res) => {
       if (err) {
         result(err, null);
       } else {
@@ -46,7 +46,7 @@ class Trash {
       .replace("T", " ")
       .substr(0, 19);
     const updateQuery =
-      "UPDATE crop_read_trash SET Crop_UID = ?, Quantity = ?,  Source_Area_UID = ?, Source_Area_Name = ?, Last_Updated = ? WHERE ID = ?";
+      "UPDATE culture_plan_trash SET Crop_UID = ?, Quantity = ?,  Source_Area_UID = ?, Source_Area_Name = ?, Last_Updated = ? WHERE ID = ?";
     const updateData = [
       trash.Crop_UID,
       trash.Quantity,
@@ -66,7 +66,7 @@ class Trash {
   }
 
   // static deletetrash(Id, result) {
-  //     const deleteQuery = 'DELETE FROM crop_read_harvested_storage WHERE trash_ID = ?'
+  //     const deleteQuery = 'DELETE FROM culture_plan_harvested_storage WHERE trash_ID = ?'
 
   //     connection.query(deleteQuery, Id, (err, res) => {
   //         if (err) {

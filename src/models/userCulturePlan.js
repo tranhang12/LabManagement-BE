@@ -18,7 +18,7 @@ class UserCulturePlan {
   }
 
   // static findById(Id, result) {
-  //     connection.query('SELECT * FROM crop_read_harvested_storage WHERE userCulturePlan_ID = ?', [Id], (err, res) => {
+  //     connection.query('SELECT * FROM culture_plan_harvested_storage WHERE userCulturePlan_ID = ?', [Id], (err, res) => {
   //         if (err) {
   //             console.log('error: ', err);
   //             result(err, null);
@@ -64,7 +64,7 @@ class UserCulturePlan {
   // }
 
   // static deleteuserCulturePlan(Id, result) {
-  //     const deleteQuery = 'DELETE FROM crop_read_harvested_storage WHERE userCulturePlan_ID = ?'
+  //     const deleteQuery = 'DELETE FROM culture_plan_harvested_storage WHERE userCulturePlan_ID = ?'
 
   //     connection.query(deleteQuery, Id, (err, res) => {
   //         if (err) {
