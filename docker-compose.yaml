@@ -1,0 +1,13 @@
+version: '3.7'
+services:
+  mysql:
+    image: mysql:5.7.42
+    environment:
+      MYSQL_ROOT_PASSWORD: tranadsadsa
+      MYSQL_USER: tranhang
+      MYSQL_PASSWORD: TranHang.143
+      MYSQL_DATABASE: lab_management_db
+    ports:
+      - 3306:3306
+    volumes:
+      - ./src/db:/my-db
