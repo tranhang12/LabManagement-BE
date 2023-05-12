@@ -51,11 +51,16 @@ exports.getCulturePlan = (req, res) => {
         });
         return;
       }
+      
       if (result != undefined) {
+        const Remaining_Days = Math.ceil((result.Transition_Time.getTime() - new Date().getTime()) / (24 * 60 * 60 * 1000))
         let response = {
           status: true,
           message: "Success",
-          result: result,
+          result: {
+            ...result,
+            Remaining_Days
+          },
         };
 
         res.status(200).send(response);
@@ -100,6 +105,7 @@ exports.addCulturePlan = (req, res) => {
       });
     });
   } catch (error) {
+    console.log(error)
     res.status(500).send({
       status: false,
       message: "Error in creating culturePlan in database:" + error.message,

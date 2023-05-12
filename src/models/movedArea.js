@@ -22,6 +22,32 @@ class MovedArea {
         });
     }
 
+    static findAllByCulturePlanIdPromise(Id) {
+        return new Promise((resolve, reject) => {
+            connection.query('SELECT * FROM culture_plan_moved_area WHERE Culture_Plan_ID = ?', [Id], (err, res) => {
+                if (err) {
+                    console.log('error: ', err);
+                    reject(err)
+                } else {
+                    resolve(res)
+                }
+            });
+        })
+    }
+
+    static updateMovedAreaCurrentQuantity(MovedAreaId, currentQuantity) {
+        return new Promise((resolve, reject) => {
+            connection.query('UPDATE culture_plan_moved_area SET Current_Quantity = ? WHERE ID = ?', [currentQuantity, MovedAreaId], (err, res) => {
+                if (err) {
+                    console.log('error: ', err);
+                    reject(err)
+                } else {
+                    resolve(res)
+                }
+            });
+        })
+    }
+
     // static findById(Id, result) {
     //     connection.query('SELECT * FROM culture_plan_harvested_storage WHERE movedArea_ID = ?', [Id], (err, res) => {
     //         if (err) {
@@ -42,6 +68,19 @@ class MovedArea {
                 result(null, res.affectedRows);
             }
         });
+    }
+    static createMovedAreaPromise(movedArea) {
+        return new Promise((resolve, reject) => {
+            connection.query('INSERT INTO culture_plan_moved_area SET ?', movedArea, (err, res) => {
+                if (err) {
+                    console.log(err)
+                    reject(err);
+                } else {
+                    resolve(res)
+                }
+            });
+        })
+        
     }
     
     static updatemovedArea(movedArea, result) {

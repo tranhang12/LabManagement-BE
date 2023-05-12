@@ -9,11 +9,9 @@ class CulturePlan {
     this.Created_Date = culturePlan.Created_Date;
     this.Transition_Time = culturePlan.Transition_Time;
     this.BatchID = culturePlan.BatchID;
-    this.Task_ID = culturePlan.Task_ID;
     this.Status = culturePlan.Status;
-    this.Initial_Quantity = culturePlan.Initial_Quantity;
-    this.Current_Quantity = culturePlan.Current_Quantity;
-    this.Remaining_Days = culturePlan.Remaining_Days;
+    this.Initial_Quantity = +culturePlan.Initial_Quantity;
+    this.Current_Quantity = +culturePlan.Current_Quantity;
   }
 
   static findAll(result) {
@@ -38,6 +36,38 @@ class CulturePlan {
         }
       }
     );
+  }
+
+  static findByIdPromise = (Id) => {
+    return new Promise((resolve, reject) => {
+      connection.query(
+        "SELECT * FROM culture_plan WHERE Culture_Plan_ID = ? LIMIT 1",
+        [Id],
+        (err, res) => {
+          if (err) {
+            reject(err)
+          } else {
+            resolve(res[0])
+          }
+        }
+      );
+    })
+  }
+
+  static updateCulturePlanCurrentQuantity = (Id, Current_Quantity) => {
+    return new Promise((resolve, reject) => {
+      connection.query(
+        "UPDATE culture_plan SET Current_Quantity = ? WHERE Culture_Plan_ID = ?",
+        [Current_Quantity, Id],
+        (err, res) => {
+          if (err) {
+            reject(err)
+          } else {
+            resolve(res)
+          }
+        }
+      );
+    })
   }
 
   static createCulturePlan(culturePlan, result) {
@@ -67,7 +97,7 @@ class CulturePlan {
       culturePlan.Task_ID,
       culturePlan.Status,
       culturePlan.Initial_Quantity,
-      culturePlan.Current_Quantity, 
+      culturePlan.Current_Quantity,
       culturePlan.Remaining_Days,
       culturePlan.Culture_Plan_ID,
     ];
@@ -86,13 +116,13 @@ class CulturePlan {
     const deleteQuery = 'DELETE FROM culture_plan WHERE Culture_Plan_ID = ?'
 
     connection.query(deleteQuery, Id, (err, res) => {
-        if (err) {
-            result(err, null);
-        } else {
-            result(null, res.affectedRows);
-        }
+      if (err) {
+        result(err, null);
+      } else {
+        result(null, res.affectedRows);
+      }
     });
-}
+  }
 
 }
 

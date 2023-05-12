@@ -41,7 +41,7 @@ class User {
     //       throw error;
     //     }
     //   }
-          
+
 
     static findById(id, result) {
         connection.query('SELECT * FROM users WHERE User_ID = ?', [id], (err, res) => {
@@ -53,7 +53,19 @@ class User {
             }
         });
     }
-    
+
+    static findByIdPromise(id) {
+        return new Promise((resolve, reject) => {
+            connection.query('SELECT * FROM users WHERE User_ID = ? LIMIT 1', [id], (err, res) => {
+                if (err) {
+                    reject(err)
+                } else {
+                    resolve(res)
+                }
+            });
+        })
+    }
+
 
     // static updateUser(user, result) {
     //     const updateQuery = 'UPDATE users SET Full_Name = ?, Phone_Number = ?, Is_Admin = ? WHERE User_Name = ?';
@@ -87,27 +99,27 @@ class User {
         let updateQuery = 'UPDATE users SET ';
         let updateData = [];
         for (const property in updatedUser) {
- 
-          if (updatedUser[property] !== null && updatedUser[property] !== undefined) {
-            updateQuery += `${property} = ?, `;
-            updateData.push(updatedUser[property]);
-          }
+
+            if (updatedUser[property] !== null && updatedUser[property] !== undefined) {
+                updateQuery += `${property} = ?, `;
+                updateData.push(updatedUser[property]);
+            }
         }
 
         updateQuery = updateQuery.slice(0, -2);
         updateQuery += ' WHERE User_ID = ?';
         updateData.push(id);
-      
+
         connection.query(updateQuery, updateData, (err, res) => {
-          if (err) {
-            console.log('error: ', err);
-            result(err, null);
-          } else {
-            result(null, res.affectedRows);
-          }
+            if (err) {
+                console.log('error: ', err);
+                result(err, null);
+            } else {
+                result(null, res.affectedRows);
+            }
         });
-      }
-      
+    }
+
 
     static deleteUser(user, result) {
         const deleteQuery = 'DELETE FROM users WHERE User_Name = ?';
@@ -126,7 +138,7 @@ class User {
     static deleteUserById(userId, callback) {
         const deleteQuery = 'DELETE FROM users WHERE User_ID = ?';
         const deleteData = [userId];
-    
+
         connection.query(deleteQuery, deleteData, (err, result) => {
             if (err) {
                 callback(err, null);
@@ -135,11 +147,11 @@ class User {
             }
         });
     }
-    
+
 
     static getAll = (callback) => {
         const query = 'SELECT * FROM users';
-    
+
         connection.query(query, (err, results) => {
             if (err) {
                 callback(err, null);
@@ -148,7 +160,7 @@ class User {
             }
         });
     };
-    
+
 }
 
 module.exports = User;

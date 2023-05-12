@@ -1,6 +1,8 @@
 const encryption = require('../helper/encryption');
 const auth = require('basic-auth');
 const HarvestStorage = require('../models/harvestStorage');
+const MovedArea = require("../models/movedArea")
+const CulturePlan = require("../models/culturePlan")
 
 
 exports.getAllHarvestStorages = (req, res) => {
@@ -42,7 +44,7 @@ exports.getharvestStorage = (req, res) => {
         let { Id } = req.params
         console.log(req.params)
 
-        harvestStorage.findById(Id, (err, result) => {
+        HarvestStorage.findById(Id, (err, result) => {
             if (err) {
                 res.status(500).send({
                     status: false,
@@ -76,42 +78,71 @@ exports.getharvestStorage = (req, res) => {
     }
 };
 
-exports.addharvestStorage = (req, res) => {
+exports.addharvestStorage = async (req, res) => {
     try {
-        const harvestStorage = new HarvestStorage(req.body);
+        const {
+            Culture_Plan_ID,
+            Area_Name,
+            Harvest_Type,
+            Quantity
+        } = req.body
+        const culturePlanId = +Culture_Plan_ID
+        const culturePlan = await CulturePlan.findByIdPromise(culturePlanId)
+        const movedAreas = await MovedArea.findAllByCulturePlanIdPromise(culturePlanId)
+        let harvestQuantity = 0
 
-        HarvestStorage.createharvestStorage(harvestStorage, (err, result) => {
-            if (err) {
-                if (err.code.includes("ER_NO_REFERENCED_ROW")) {
-                    res.status(500).send({
-                        status: false,
-                        message: 'Foreign Key Constraint is failing'
-                    });
-                }
-                else {
-                    res.status(500).send({
-                        status: false,
-                        message: 'Error in creating harvestStorage in database:' + err.message
-                    });
-                }
-                return;
-            }
 
-            else if (result < 1) {
-                res.status(500).send({
+        if (culturePlan.Area === Area_Name) {
+            harvestQuantity = Harvest_Type === "all" ? culturePlan.Current_Quantity : +Quantity
+            if (culturePlan.Current_Quantity < harvestQuantity || harvestQuantity <= 0) {
+                return res.status(400).send({
                     status: false,
-                    message: 'Error in creating harvestStorage in database'
+                    message: 'Invalid harvest quantity'
                 });
-                return;
             }
 
-            res.status(200).send({
-                status: true,
-                message: 'Record added successfully'
-            });
+            await Promise.all([HarvestStorage.createHarvestStoragePromise({
+                Culture_Plan_ID: culturePlanId,
+                Quantity: harvestQuantity,
+                Source_Area_Name: Area_Name
+            }),
+            CulturePlan.updateCulturePlanCurrentQuantity(culturePlanId, culturePlan.Current_Quantity - harvestQuantity)
+            ])
+        } else {
+            const foundMovedAreaIndex = movedAreas.findIndex(e => e.Area_Name === Area_Name)
+            if (foundMovedAreaIndex === -1) {
+                return res.status(400).send({
+                    status: false,
+                    message: 'Move Area not found'
+                });
+            }
+
+            const movedArea = movedAreas[foundMovedAreaIndex]
+            harvestQuantity = Harvest_Type === "all" ? movedArea.Current_Quantity : +Quantity
+            if (movedArea.Current_Quantity < harvestQuantity || harvestQuantity <= 0) {
+                return res.status(400).send({
+                    status: false,
+                    message: 'Invalid harvest quantity'
+                });
+            }
+
+            await Promise.all([HarvestStorage.createHarvestStoragePromise({
+                Culture_Plan_ID: culturePlanId,
+                Quantity: harvestQuantity,
+                Source_Area_Name: Area_Name
+            }),
+            MovedArea.updateMovedAreaCurrentQuantity(movedArea.ID, movedArea.Current_Quantity - harvestQuantity)
+            ])
+        }
+
+        return res.status(200).send({
+            status: true,
+            message: 'Crop harvested successfully'
         });
+
     }
     catch (error) {
+        console.log(error)
         res.status(500).send({
             status: false,
             message: 'Error in creating harvestStorage in database:' + error.message

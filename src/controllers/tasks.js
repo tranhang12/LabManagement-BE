@@ -76,95 +76,38 @@ exports.getTask = (req, res) => {
     }
 };
 
-exports.addTask = (req, res) => {
+exports.addTask = async (req, res) => {
     try {
-        const user = auth(req);
 
-        if (user == undefined) {
-            res.status(401).send({
-                status: false,
-                message: 'Unauthorized to create task'
-            });
-            return;
-        }
+        const {
+            Culture_Plan_ID,
+            Task_Category,
+            Title,
+            Description,
+            Priority,
+            Due_Date,
+            Status = "Incomplete",
+            Assigned_To
+        } = req.body
 
-        const username = user.name;
-        const password = user.pass;
-
-        User.findByUsername(username, (err, user) => {
-            if (err) {
-                res.status(500).send({
-                    status: false,
-                    message: 'Error retrieving user from database: ' + err.message
-                });
-                return;
-            }
-    
-            if (!user) {
-                res.status(500).send({
-                    status: false,
-                    message: 'Invalid username or password'
-                });
-                return;
-            }
-
-            const result = encryption.compare(password, user.User_Password);
-            if (result === true) {
-                if (!user.Is_Admin) {
-                    res.status(401).send({
-                        status: false,
-                        message: 'Unauthorized to create task'
-                    });
-                    return;
-                }
-
-                const task = new Tasks(req.body);
-
-                if (req.body.Status == undefined || req.body.Status == "") {
-                    task.Status = "Incomplete";
-                }
-
-                Tasks.createTask(task, (err, result) => {
-                    if (err) {
-                        if (err.code.includes("ER_NO_REFERENCED_ROW")) {
-                            res.status(500).send({
-                                status: false,
-                                message: 'Assigned To user does not exist'
-                            });
-                        }
-                        else {
-                            res.status(500).send({
-                                status: false,
-                                message: 'Error in creating task in database'
-                            });
-                        }
-                        return;
-                    }
-
-                    else if (result < 1) {
-                        res.status(500).send({
-                            status: false,
-                            message: 'Error in creating task in database'
-                        });
-                        return;
-                    }
-
-                    res.status(200).send({
-                        status: true,
-                        message: 'Record added successfully'
-                    });
-                });
-            }
-            else {
-                res.status(401).send({
-                    status: false,
-                    message: 'Unauthorized to create task'
-                });
-                return;
-            }
+        await Tasks.createTaskPromise({
+            Culture_Plan_ID,
+            Task_Category,
+            Title,
+            Description,
+            Priority,
+            Due_Date,
+            Status,
+            Assigned_To
+        })
+        
+        return res.status(200).send({
+            status: true,
+            message: 'Task created successfully'
         });
     }
     catch (error) {
+        console.log(error)
         res.status(500).send({
             status: false,
             message: 'Error in creating task in database: ' + error.message

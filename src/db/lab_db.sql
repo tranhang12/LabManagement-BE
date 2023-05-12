@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 8.0.19, for Win64 (x86_64)
+-- MySQL dump 10.13  Distrib 8.0.33, for Linux (x86_64)
 --
--- Host: localhost    Database: lab_management_db
+-- Host: 127.0.0.1    Database: lab_management_db
 -- ------------------------------------------------------
--- Server version	8.0.32
+-- Server version	5.7.42
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -23,16 +23,15 @@ DROP TABLE IF EXISTS `area`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `area` (
-  `Area_ID` int NOT NULL AUTO_INCREMENT,
+  `Area_ID` int(11) NOT NULL AUTO_INCREMENT,
   `Area_Name` varchar(100) NOT NULL,
-  `Area_Size` int NOT NULL,
+  `Area_Size` int(11) NOT NULL,
   `Area_Unit` varchar(10) DEFAULT NULL,
   `Area_Type` varchar(50) DEFAULT NULL,
   `Area_Locations` varchar(50) DEFAULT NULL,
-  `Quantity` int DEFAULT NULL,
   PRIMARY KEY (`Area_ID`),
   UNIQUE KEY `Area_Name` (`Area_Name`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -41,7 +40,7 @@ CREATE TABLE `area` (
 
 LOCK TABLES `area` WRITE;
 /*!40000 ALTER TABLE `area` DISABLE KEYS */;
-INSERT INTO `area` VALUES (3,'Lab 01',20,'m2','Tissue culture laboratory','Tầng 2 nhà A4',100),(4,'Lab 02',30,'m2','Tissue culture laboratory','Tầng 3 nhà A4',200),(5,'Tissue culture room 01',40,'m2','Tissue culture room','Tầng 1 nhà B2',300),(6,'Tissue culture room 02',40,'m2','Tissue culture room','Tầng 1 nhà B2',400),(8,'Lab 03',50,'m2','Tissue culture room','Home at Me',0),(9,'Lab 04',25,'m2','Tissue culture laboratory','Nhà A2',0);
+INSERT INTO `area` VALUES (3,'Lab 01',20,'m2','Tissue culture laboratory','Tầng 2 nhà A4'),(4,'Lab 02',30,'m2','Tissue culture laboratory','Tầng 3 nhà A4'),(5,'Tissue culture room 01',40,'m2','Tissue culture room','Tầng 1 nhà B2'),(6,'Tissue culture room 02',40,'m2','Tissue culture room','Tầng 1 nhà B2'),(8,'Lab 03',50,'m2','Tissue culture room','Home at Me'),(9,'Lab 04',25,'m2','Tissue culture laboratory','Nhà A2');
 /*!40000 ALTER TABLE `area` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -53,12 +52,12 @@ DROP TABLE IF EXISTS `culture`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `culture` (
-  `Culture_ID` int NOT NULL AUTO_INCREMENT,
-  `Plant_ID` int DEFAULT NULL,
-  `Duration_Of_Culture` int DEFAULT NULL,
-  `Duration_Of_Bud_Regeneration` int DEFAULT NULL,
-  `Duration_Of_Multiply_Bud` int DEFAULT NULL,
-  `Duration_Of_Rooting` int DEFAULT NULL,
+  `Culture_ID` int(11) NOT NULL AUTO_INCREMENT,
+  `Plant_ID` int(11) DEFAULT NULL,
+  `Duration_Of_Culture` int(11) DEFAULT NULL,
+  `Duration_Of_Bud_Regeneration` int(11) DEFAULT NULL,
+  `Duration_Of_Multiply_Bud` int(11) DEFAULT NULL,
+  `Duration_Of_Rooting` int(11) DEFAULT NULL,
   `Temperature_Min` float DEFAULT NULL,
   `Temperature_Max` float DEFAULT NULL,
   `Light_Intensity` varchar(100) DEFAULT NULL,
@@ -66,7 +65,7 @@ CREATE TABLE `culture` (
   PRIMARY KEY (`Culture_ID`),
   KEY `Plant_ID` (`Plant_ID`),
   CONSTRAINT `Culture_ibfk_1` FOREIGN KEY (`Plant_ID`) REFERENCES `plant` (`Plant_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -86,11 +85,11 @@ DROP TABLE IF EXISTS `culture_medium`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `culture_medium` (
-  `Culture_Medium_ID` int NOT NULL AUTO_INCREMENT,
+  `Culture_Medium_ID` int(11) NOT NULL AUTO_INCREMENT,
   `Culture_Medium_Name` varchar(100) NOT NULL,
   `Culture_Medium_Description` text,
   PRIMARY KEY (`Culture_Medium_ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -111,13 +110,13 @@ DROP TABLE IF EXISTS `culture_medium_relation`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `culture_medium_relation` (
-  `culture_id` int NOT NULL,
-  `culture_medium_id` int NOT NULL,
+  `culture_id` int(11) NOT NULL,
+  `culture_medium_id` int(11) NOT NULL,
   PRIMARY KEY (`culture_id`,`culture_medium_id`),
   KEY `culture_medium_id` (`culture_medium_id`),
   CONSTRAINT `culture_medium_relation_ibfk_1` FOREIGN KEY (`culture_id`) REFERENCES `culture` (`Culture_ID`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `culture_medium_relation_ibfk_2` FOREIGN KEY (`culture_medium_id`) REFERENCES `culture_medium` (`Culture_Medium_ID`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -137,25 +136,21 @@ DROP TABLE IF EXISTS `culture_plan`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `culture_plan` (
-  `Culture_Plan_ID` int NOT NULL AUTO_INCREMENT,
+  `Culture_Plan_ID` int(11) NOT NULL AUTO_INCREMENT,
   `Area` varchar(100) NOT NULL,
   `Plant_Type` varchar(100) NOT NULL,
   `Container_Type` varchar(50) NOT NULL,
   `Transition_Time` date NOT NULL,
-  `Task_ID` int DEFAULT NULL,
   `Created_Date` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `Status` varchar(100) DEFAULT NULL,
-  `Current_Quantity` int DEFAULT '0',
-  `Initial_Quantity` int DEFAULT '0',
-  `Remaining_Days` int DEFAULT '0',
+  `Current_Quantity` int(11) DEFAULT '0',
+  `Initial_Quantity` int(11) DEFAULT '0',
   `last_updated` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `BatchID` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`Culture_Plan_ID`),
   KEY `culture_plan_FK` (`Area`),
-  KEY `culture_plan_FK_3` (`Task_ID`),
-  CONSTRAINT `culture_plan_FK` FOREIGN KEY (`Area`) REFERENCES `area` (`Area_Name`),
-  CONSTRAINT `culture_plan_FK_3` FOREIGN KEY (`Task_ID`) REFERENCES `tasks` (`Task_ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=62 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  CONSTRAINT `culture_plan_FK` FOREIGN KEY (`Area`) REFERENCES `area` (`Area_Name`)
+) ENGINE=InnoDB AUTO_INCREMENT=67 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -164,7 +159,7 @@ CREATE TABLE `culture_plan` (
 
 LOCK TABLES `culture_plan` WRITE;
 /*!40000 ALTER TABLE `culture_plan` DISABLE KEYS */;
-INSERT INTO `culture_plan` VALUES (6,'Lab 01','Xương rồng','Pots','0004-05-23',NULL,NULL,NULL,0,0,0,'2023-05-08 14:05:45',NULL),(45,'Lab 01','Test','Box','2018-04-23',1,'2023-05-03 17:08:02','delete',5,2,0,'2023-05-10 07:46:54',NULL),(50,'Lab 01','Test','Pots','2018-04-23',1,'2023-05-03 17:11:00','location change',5,2,0,'2023-05-10 07:46:54',NULL),(54,'Lab 01','Test','Pots','2018-04-23',1,'2023-05-03 18:45:47','location change',5,2,1,'2023-05-10 07:46:54',NULL),(56,'Lab 02','Asparagus plant','Pots','2024-12-23',NULL,'2023-05-10 07:56:41',NULL,25,25,0,'2023-05-10 07:56:41',NULL),(57,'Lab 02','Aloe vera plant','Pots','2023-06-23',NULL,'2023-05-10 15:40:13',NULL,30,30,0,'2023-05-10 15:40:13',NULL),(59,'Lab 03','Aloe vera plant','Pots','2023-07-23',NULL,'2023-05-10 15:47:26',NULL,30,30,0,'2023-05-10 15:47:26',NULL),(61,'Lab 03','Banana','Pots','2023-09-13',NULL,'2023-05-11 10:25:29',NULL,50,50,0,'2023-05-11 10:25:29','Ba-11may');
+INSERT INTO `culture_plan` VALUES (63,'Lab 01','Cu dau','Pots','2023-05-31','2023-05-12 00:00:00','',100,100,'2023-05-12 16:23:49','Cu-12may'),(64,'Lab 02','Cay mia','Pots','2023-05-30','2023-05-12 00:00:00','',200,200,'2023-05-12 16:24:10','Ca-12may'),(65,'Lab 01','Ca rot','Pots','2023-05-29','2023-05-12 00:00:00','',100,100,'2023-05-12 16:24:42','Ca-12may'),(66,'Lab 01','Khoai tay','Pots','2023-05-27','2023-05-12 00:00:00','',200,200,'2023-05-12 16:24:56','Kh-12may');
 /*!40000 ALTER TABLE `culture_plan` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
@@ -172,7 +167,7 @@ UNLOCK TABLES;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
 /*!50003 SET character_set_client  = utf8mb4 */ ;
 /*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
@@ -197,16 +192,16 @@ DROP TABLE IF EXISTS `culture_plan_harvested_storage`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `culture_plan_harvested_storage` (
-  `ID` int NOT NULL AUTO_INCREMENT,
-  `Culture_Plan_ID` int DEFAULT NULL,
-  `Quantity` int DEFAULT NULL,
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
+  `Culture_Plan_ID` int(11) DEFAULT NULL,
+  `Quantity` int(11) DEFAULT NULL,
   `Produced_Quantity` float DEFAULT NULL,
   `Source_Area_Name` varchar(255) DEFAULT NULL,
   `Created_Date` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`ID`),
   KEY `crop_read_harvested_storage_FK` (`Culture_Plan_ID`),
   CONSTRAINT `crop_read_harvested_storage_FK` FOREIGN KEY (`Culture_Plan_ID`) REFERENCES `culture_plan` (`Culture_Plan_ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -226,19 +221,19 @@ DROP TABLE IF EXISTS `culture_plan_moved_area`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `culture_plan_moved_area` (
-  `ID` int NOT NULL AUTO_INCREMENT,
-  `Culture_Plan_ID` int DEFAULT NULL,
-  `Area_Name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
-  `Initial_Quantity` int DEFAULT NULL,
-  `Current_Quantity` int DEFAULT NULL,
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
+  `Culture_Plan_ID` int(11) DEFAULT NULL,
+  `Area_Name` varchar(255) DEFAULT NULL,
+  `Initial_Quantity` int(11) DEFAULT NULL,
+  `Current_Quantity` int(11) DEFAULT NULL,
   `Created_Date` datetime DEFAULT CURRENT_TIMESTAMP,
   `Transition_Time` datetime DEFAULT NULL,
-  `Remaining_Days` int DEFAULT '0',
+  `Remaining_Days` int(11) DEFAULT '0',
   `last_updated` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`ID`),
   KEY `crop_read_moved_area_FK` (`Culture_Plan_ID`),
   CONSTRAINT `crop_read_moved_area_FK` FOREIGN KEY (`Culture_Plan_ID`) REFERENCES `culture_plan` (`Culture_Plan_ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -247,7 +242,6 @@ CREATE TABLE `culture_plan_moved_area` (
 
 LOCK TABLES `culture_plan_moved_area` WRITE;
 /*!40000 ALTER TABLE `culture_plan_moved_area` DISABLE KEYS */;
-INSERT INTO `culture_plan_moved_area` VALUES (10,50,'Lab 01',5,2,'2023-05-03 22:11:00','2018-04-23 00:00:00',0,'2023-05-08 14:06:05'),(11,54,'Lab 01',5,2,'2023-05-04 01:45:47','2018-04-23 00:00:00',1,'2023-05-08 14:06:05'),(12,6,'Lab 02',50,50,'2023-05-04 03:01:25','2023-05-10 00:00:00',6,'2023-05-08 14:06:05'),(13,45,'Tissue culture room 01',110,110,'2023-05-04 08:15:02','2023-05-10 00:00:00',6,'2023-05-08 14:06:05'),(14,45,'Tissue culture room 02',110,110,'2023-05-04 14:00:30','2023-05-10 00:00:00',10,'2023-05-08 14:06:05'),(15,6,'Lab 02',-1,-1,'2023-05-11 22:08:23','2023-05-11 00:00:00',0,'2023-05-11 15:08:23');
 /*!40000 ALTER TABLE `culture_plan_moved_area` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -259,15 +253,15 @@ DROP TABLE IF EXISTS `culture_plan_trash`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `culture_plan_trash` (
-  `ID` int NOT NULL AUTO_INCREMENT,
-  `Culture_Plan_ID` int DEFAULT NULL,
-  `Quantity` int DEFAULT NULL,
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
+  `Culture_Plan_ID` int(11) DEFAULT NULL,
+  `Quantity` int(11) DEFAULT NULL,
   `Source_Area_Name` varchar(255) DEFAULT NULL,
   `Created_Date` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`ID`),
   KEY `crop_read_trash_FK` (`Culture_Plan_ID`),
   CONSTRAINT `crop_read_trash_FK` FOREIGN KEY (`Culture_Plan_ID`) REFERENCES `culture_plan` (`Culture_Plan_ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -287,18 +281,18 @@ DROP TABLE IF EXISTS `growth_record`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `growth_record` (
-  `Growth_Record_ID` int NOT NULL AUTO_INCREMENT,
-  `Culture_Plan_ID` int DEFAULT NULL,
+  `Growth_Record_ID` int(11) NOT NULL AUTO_INCREMENT,
+  `Culture_Plan_ID` int(11) DEFAULT NULL,
   `Observation_Date` date DEFAULT NULL,
   `Height` decimal(10,2) DEFAULT NULL,
   `Width` decimal(10,2) DEFAULT NULL,
-  `Number_of_Leaves` int DEFAULT NULL,
+  `Number_of_Leaves` int(11) DEFAULT NULL,
   `Health_Status` varchar(50) DEFAULT NULL,
   `Image` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`Growth_Record_ID`),
   KEY `Culture_ID` (`Culture_Plan_ID`),
   CONSTRAINT `Growth_Record_FK` FOREIGN KEY (`Culture_Plan_ID`) REFERENCES `culture_plan` (`Culture_Plan_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -318,17 +312,17 @@ DROP TABLE IF EXISTS `material`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `material` (
-  `Material_ID` int NOT NULL AUTO_INCREMENT,
+  `Material_ID` int(11) NOT NULL AUTO_INCREMENT,
   `Category` varchar(255) NOT NULL,
   `Name` varchar(255) NOT NULL,
   `Price` decimal(10,2) NOT NULL,
   `Produced_By` varchar(255) NOT NULL,
-  `Quantity` int NOT NULL,
+  `Quantity` int(11) NOT NULL,
   `Additional_Notes` text,
   `Unit` varchar(100) DEFAULT NULL,
   `Expiration_Date` date DEFAULT NULL,
   PRIMARY KEY (`Material_ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=43 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=37 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -349,8 +343,8 @@ DROP TABLE IF EXISTS `notifications`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `notifications` (
-  `Notification_ID` int NOT NULL AUTO_INCREMENT,
-  `Task_ID` int NOT NULL,
+  `Notification_ID` int(11) NOT NULL AUTO_INCREMENT,
+  `Task_ID` int(11) NOT NULL,
   `Assigned_To` varchar(50) NOT NULL,
   `Message` varchar(255) NOT NULL,
   `Is_Read` tinyint(1) NOT NULL DEFAULT '0',
@@ -359,7 +353,7 @@ CREATE TABLE `notifications` (
   KEY `notifications_FK_Task` (`Task_ID`),
   CONSTRAINT `notifications_FK` FOREIGN KEY (`Assigned_To`) REFERENCES `users` (`User_Name`),
   CONSTRAINT `notifications_FK_Task` FOREIGN KEY (`Task_ID`) REFERENCES `tasks` (`Task_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -379,13 +373,13 @@ DROP TABLE IF EXISTS `plant`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `plant` (
-  `Plant_ID` int NOT NULL AUTO_INCREMENT,
+  `Plant_ID` int(11) NOT NULL AUTO_INCREMENT,
   `Plant_Name` varchar(100) NOT NULL,
   `Scientific_Name` varchar(200) NOT NULL,
   `Plant_Description` text,
   `Image` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`Plant_ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -406,7 +400,7 @@ DROP TABLE IF EXISTS `tasks`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `tasks` (
-  `Task_ID` int NOT NULL AUTO_INCREMENT,
+  `Task_ID` int(11) NOT NULL AUTO_INCREMENT,
   `Task_Category` varchar(20) NOT NULL,
   `Title` varchar(50) NOT NULL,
   `Description` varchar(500) DEFAULT NULL,
@@ -414,10 +408,13 @@ CREATE TABLE `tasks` (
   `Due_Date` date NOT NULL,
   `Status` varchar(20) NOT NULL DEFAULT 'Incomplete',
   `Assigned_To` varchar(50) DEFAULT NULL,
+  `Culture_Plan_ID` int(11) NOT NULL,
   PRIMARY KEY (`Task_ID`),
   KEY `tasks_FK` (`Assigned_To`),
-  CONSTRAINT `tasks_FK` FOREIGN KEY (`Assigned_To`) REFERENCES `users` (`User_Name`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  KEY `tasks_culture_plan_Culture_Plan_ID_fk` (`Culture_Plan_ID`),
+  CONSTRAINT `tasks_FK` FOREIGN KEY (`Assigned_To`) REFERENCES `users` (`User_Name`),
+  CONSTRAINT `tasks_culture_plan_Culture_Plan_ID_fk` FOREIGN KEY (`Culture_Plan_ID`) REFERENCES `culture_plan` (`Culture_Plan_ID`)
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -426,7 +423,7 @@ CREATE TABLE `tasks` (
 
 LOCK TABLES `tasks` WRITE;
 /*!40000 ALTER TABLE `tasks` DISABLE KEYS */;
-INSERT INTO `tasks` VALUES (1,'Test','Test','Test','High','2030-04-23','Active','MinMin123'),(2,'sanitation','Schedule regular cleaning tasks.','Ensure that all areas are cleaned on a regular basis, including floors, countertops, and equipment. Use appropriate cleaning solutions and follow proper procedures to maintain a sanitary environment. Dispose of waste materials properly and restock necessary supplies when needed.','normal','2021-07-22','Incomplete','tranhang12'),(3,'sanitation','Perform equipment maintenance.','Regularly inspect and maintain equipment to ensure it is in good working condition. Replace worn or damaged parts as needed and perform routine maintenance tasks according to the manufacturer\'s recommendations.','normal','2021-07-22','Incomplete','tranhang123'),(4,'reservoir','Monitor water quality in the reservoir.','Regularly test the water quality in the reservoir to ensure it meets required standards. Perform necessary treatments to maintain water quality and monitor for any potential issues or contaminants.','normal','2021-07-20','Incomplete','tranhang1234'),(5,'safety','Conduct safety inspections.','Perform regular safety inspections of the facilities and equipment to identify and address any potential hazards. Ensure that all safety protocols are being followed and that employees are properly trained in emergency procedures.','urgent','2021-07-20','Incomplete',NULL),(6,'general','Hold team meetings.','Schedule regular team meetings to discuss ongoing projects, address any concerns, and plan for future tasks. Encourage open communication and collaboration among team members to ensure the smooth operation of the organization.','normal','2021-03-30','Incomplete',NULL);
+INSERT INTO `tasks` VALUES (7,'Move','1231231231','','urgent','2023-05-19','Incomplete','tranhang12',63);
 /*!40000 ALTER TABLE `tasks` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -438,15 +435,15 @@ DROP TABLE IF EXISTS `user_culture_plan`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `user_culture_plan` (
-  `User_Culture_Plan_ID` int NOT NULL AUTO_INCREMENT,
-  `User_ID` int NOT NULL,
-  `Culture_Plan_ID` int NOT NULL,
+  `User_Culture_Plan_ID` int(11) NOT NULL AUTO_INCREMENT,
+  `User_ID` int(11) NOT NULL,
+  `Culture_Plan_ID` int(11) NOT NULL,
   PRIMARY KEY (`User_Culture_Plan_ID`),
   KEY `user_culture_plan_FK` (`User_ID`),
   KEY `user_culture_plan_FK_1` (`Culture_Plan_ID`),
   CONSTRAINT `user_culture_plan_FK` FOREIGN KEY (`User_ID`) REFERENCES `users` (`User_ID`),
   CONSTRAINT `user_culture_plan_FK_1` FOREIGN KEY (`Culture_Plan_ID`) REFERENCES `culture_plan` (`Culture_Plan_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -466,7 +463,7 @@ DROP TABLE IF EXISTS `users`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `users` (
-  `User_ID` int NOT NULL AUTO_INCREMENT,
+  `User_ID` int(11) NOT NULL AUTO_INCREMENT,
   `User_Name` varchar(50) NOT NULL,
   `User_Password` varchar(500) NOT NULL,
   `Full_Name` varchar(100) NOT NULL,
@@ -475,7 +472,7 @@ CREATE TABLE `users` (
   `email` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`User_ID`),
   UNIQUE KEY `User_Name` (`User_Name`)
-) ENGINE=InnoDB AUTO_INCREMENT=72 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=72 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -487,10 +484,6 @@ LOCK TABLES `users` WRITE;
 INSERT INTO `users` VALUES (19,'tranhang12','$2b$10$2EkuXuv3LCbT06SuwocUuu/6GVAm1vLN97n7AjmX0ZZlJoRkMeBee','Tran Thi Hang','09837812498',1,'tranhang12@gmail.com'),(21,'tranhang123','$2b$10$A3X0QGt1Gt85fxJbXKepLOXmNHEiAKCJSYeP4h1OeIupZ1nXPdi5q','Hang Tran','0892374892',0,'tranhang13@gmail.com'),(25,'caominh25','$2b$10$nbupU97fA4BCC.kRG2u35eyCAiALu2AYtw0SVBgZiBd0t89w0Kw9e','Minh Cao','09238497312',1,'tranhang14@gmail.com'),(26,'MinMin123','$2b$10$A4dUIqMiVyLZFa3FVgiULeHSDwWxokFSSFkxkTuq8/l2UCUKjUBUq','Cao Minh','0834897355',1,'tranhang15@gmail.com'),(33,'Minmin12','$2b$10$neMgpz4eFAaIiU0jHA.7weFIRGRC/tF6bUn0tJpI8rSz.Gd8Rt5BG','Dương Ngọc Minh','098236578124',0,'tranhang17@gmail.com'),(35,'ThaoVy_2023','$2b$10$PFXjLUI4KE5BBw7ViDgphegV24iWmhyRLdF.MifRt/Mf0je/6sx2W','Thảo Vy','098236578124',0,'tranhang18@gmail.com'),(36,'tranhang1234','$2b$10$M1T6iug/vt95vfi.pvXkeeQ2YKzgY12EOioRmacY352g0lcQ5dNdK','Trần Thị Hằng','039297597654',0,'tranhang19@gmail.com'),(71,'admin123','$2b$10$cHZjGzTz2/w2EMJ7v9q4i../StWNXO6lLbMSEneLbA9YflQGqFmha','Trần Thị Hằng','03929759765',1,'tranhangsocute12@gmail.com');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
-
---
--- Dumping routines for database 'lab_management_db'
---
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -501,4 +494,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-05-12  8:50:45
+-- Dump completed on 2023-05-13  1:03:46
