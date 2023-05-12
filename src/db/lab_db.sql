@@ -138,14 +138,10 @@ DROP TABLE IF EXISTS `culture_plan`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `culture_plan` (
   `Culture_Plan_ID` int NOT NULL AUTO_INCREMENT,
-  `Activity_Type` varchar(50) NOT NULL,
   `Area` varchar(100) NOT NULL,
   `Plant_Type` varchar(100) NOT NULL,
-  `Container_Quantity` varchar(50) NOT NULL,
   `Container_Type` varchar(50) NOT NULL,
   `Transition_Time` date NOT NULL,
-  `Source_Area` varchar(100) DEFAULT NULL,
-  `Number_of_Plants` int DEFAULT NULL,
   `Task_ID` int DEFAULT NULL,
   `Created_Date` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `Status` varchar(100) DEFAULT NULL,
@@ -153,14 +149,13 @@ CREATE TABLE `culture_plan` (
   `Initial_Quantity` int DEFAULT '0',
   `Remaining_Days` int DEFAULT '0',
   `last_updated` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `BatchID` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`Culture_Plan_ID`),
   KEY `culture_plan_FK` (`Area`),
-  KEY `culture_plan_FK_1` (`Source_Area`),
   KEY `culture_plan_FK_3` (`Task_ID`),
   CONSTRAINT `culture_plan_FK` FOREIGN KEY (`Area`) REFERENCES `area` (`Area_Name`),
-  CONSTRAINT `culture_plan_FK_1` FOREIGN KEY (`Source_Area`) REFERENCES `area` (`Area_Name`),
   CONSTRAINT `culture_plan_FK_3` FOREIGN KEY (`Task_ID`) REFERENCES `tasks` (`Task_ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=56 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=62 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -169,9 +164,30 @@ CREATE TABLE `culture_plan` (
 
 LOCK TABLES `culture_plan` WRITE;
 /*!40000 ALTER TABLE `culture_plan` DISABLE KEYS */;
-INSERT INTO `culture_plan` VALUES (6,'Nuôi cấy cây nha đam','Lab 01','Xương rồng','10','Pots','0004-05-23','Lab 01',5,NULL,NULL,NULL,0,0,0,'2023-05-08 14:05:45'),(45,'Test','Lab 01','Test','Test','Large','2018-04-23','Lab 01',2,1,'2023-05-03 17:08:02','delete',5,2,0,'2023-05-08 14:05:45'),(46,'Test','Lab 01','Test','Test','Large','2018-04-23','Lab 01',2,1,'2023-05-03 17:08:36','location change',5,2,0,'2023-05-08 14:05:45'),(47,'Test','Lab 01','Test','Test','Large','2018-04-23','Lab 01',2,1,'2023-05-03 17:08:59','location change',5,2,0,'2023-05-08 14:05:45'),(48,'Test','Lab 01','Test','Test','Large','2018-04-23','Lab 01',2,1,'2023-05-03 17:09:10','location change',5,2,0,'2023-05-08 14:05:45'),(49,'Test','Lab 01','Test','Test','Large','2018-04-23','Lab 01',2,1,'2023-05-03 17:10:44','location change',5,2,0,'2023-05-08 14:05:45'),(50,'Test','Lab 01','Test','Test','Large','2018-04-23','Lab 01',2,1,'2023-05-03 17:11:00','location change',5,2,0,'2023-05-08 14:05:45'),(51,'Test','Lab 01','Test','Test','Large','2018-04-23','Lab 01',2,1,'2023-05-03 17:23:38','delete',5,2,0,'2023-05-08 14:05:45'),(52,'Test','Lab 01','Test','Test','Large','2018-04-23','Lab 01',2,1,'2023-05-03 17:24:41','harvest',5,2,0,'2023-05-08 14:05:45'),(53,'Test','Lab 01','Test','Test','Large','2018-04-23','Lab 01',2,1,'2023-05-03 17:26:48','harvest',5,2,0,'2023-05-08 14:05:45'),(54,'Thử nghiệm','Lab 01','Test','Test','Large','2018-04-23','Lab 01',10,1,'2023-05-03 18:45:47','location change',5,2,1,'2023-05-08 14:05:45'),(55,'Test 1','Lab 01','Test 1','20','Pots','2023-12-23','Lab 01',5,NULL,'2023-05-08 03:25:33',NULL,5,5,5,'2023-05-08 14:05:45');
+INSERT INTO `culture_plan` VALUES (6,'Lab 01','Xương rồng','Pots','0004-05-23',NULL,NULL,NULL,0,0,0,'2023-05-08 14:05:45',NULL),(45,'Lab 01','Test','Box','2018-04-23',1,'2023-05-03 17:08:02','delete',5,2,0,'2023-05-10 07:46:54',NULL),(50,'Lab 01','Test','Pots','2018-04-23',1,'2023-05-03 17:11:00','location change',5,2,0,'2023-05-10 07:46:54',NULL),(54,'Lab 01','Test','Pots','2018-04-23',1,'2023-05-03 18:45:47','location change',5,2,1,'2023-05-10 07:46:54',NULL),(56,'Lab 02','Asparagus plant','Pots','2024-12-23',NULL,'2023-05-10 07:56:41',NULL,25,25,0,'2023-05-10 07:56:41',NULL),(57,'Lab 02','Aloe vera plant','Pots','2023-06-23',NULL,'2023-05-10 15:40:13',NULL,30,30,0,'2023-05-10 15:40:13',NULL),(59,'Lab 03','Aloe vera plant','Pots','2023-07-23',NULL,'2023-05-10 15:47:26',NULL,30,30,0,'2023-05-10 15:47:26',NULL),(61,'Lab 03','Banana','Pots','2023-09-13',NULL,'2023-05-11 10:25:29',NULL,50,50,0,'2023-05-11 10:25:29','Ba-11may');
 /*!40000 ALTER TABLE `culture_plan` ENABLE KEYS */;
 UNLOCK TABLES;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `generate_batch_id` BEFORE INSERT ON `culture_plan` FOR EACH ROW BEGIN
+  SET NEW.batchID = CONCAT(
+    SUBSTRING(NEW.Plant_Type, 1, 2), '-',
+    DAY(NOW()),
+    LOWER(SUBSTRING(MONTHNAME(NOW()), 1, 3))
+  );
+END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 
 --
 -- Table structure for table `culture_plan_harvested_storage`
@@ -199,7 +215,6 @@ CREATE TABLE `culture_plan_harvested_storage` (
 
 LOCK TABLES `culture_plan_harvested_storage` WRITE;
 /*!40000 ALTER TABLE `culture_plan_harvested_storage` DISABLE KEYS */;
-INSERT INTO `culture_plan_harvested_storage` VALUES (1,NULL,2,2,'Lab 01','2023-05-03 22:24:41'),(2,53,NULL,NULL,'Lab 01','2023-05-03 22:26:48'),(3,45,NULL,NULL,'Lab 01','2023-05-03 22:40:31');
 /*!40000 ALTER TABLE `culture_plan_harvested_storage` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -223,7 +238,7 @@ CREATE TABLE `culture_plan_moved_area` (
   PRIMARY KEY (`ID`),
   KEY `crop_read_moved_area_FK` (`Culture_Plan_ID`),
   CONSTRAINT `crop_read_moved_area_FK` FOREIGN KEY (`Culture_Plan_ID`) REFERENCES `culture_plan` (`Culture_Plan_ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -232,7 +247,7 @@ CREATE TABLE `culture_plan_moved_area` (
 
 LOCK TABLES `culture_plan_moved_area` WRITE;
 /*!40000 ALTER TABLE `culture_plan_moved_area` DISABLE KEYS */;
-INSERT INTO `culture_plan_moved_area` VALUES (10,50,'Lab 01',5,2,'2023-05-03 22:11:00','2018-04-23 00:00:00',0,'2023-05-08 14:06:05'),(11,54,'Lab 01',5,2,'2023-05-04 01:45:47','2018-04-23 00:00:00',1,'2023-05-08 14:06:05'),(12,6,'Lab 02',50,50,'2023-05-04 03:01:25','2023-05-10 00:00:00',6,'2023-05-08 14:06:05'),(13,45,'Tissue culture room 01',110,110,'2023-05-04 08:15:02','2023-05-10 00:00:00',6,'2023-05-08 14:06:05'),(14,45,'Tissue culture room 02',110,110,'2023-05-04 14:00:30','2023-05-10 00:00:00',10,'2023-05-08 14:06:05');
+INSERT INTO `culture_plan_moved_area` VALUES (10,50,'Lab 01',5,2,'2023-05-03 22:11:00','2018-04-23 00:00:00',0,'2023-05-08 14:06:05'),(11,54,'Lab 01',5,2,'2023-05-04 01:45:47','2018-04-23 00:00:00',1,'2023-05-08 14:06:05'),(12,6,'Lab 02',50,50,'2023-05-04 03:01:25','2023-05-10 00:00:00',6,'2023-05-08 14:06:05'),(13,45,'Tissue culture room 01',110,110,'2023-05-04 08:15:02','2023-05-10 00:00:00',6,'2023-05-08 14:06:05'),(14,45,'Tissue culture room 02',110,110,'2023-05-04 14:00:30','2023-05-10 00:00:00',10,'2023-05-08 14:06:05'),(15,6,'Lab 02',-1,-1,'2023-05-11 22:08:23','2023-05-11 00:00:00',0,'2023-05-11 15:08:23');
 /*!40000 ALTER TABLE `culture_plan_moved_area` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -261,7 +276,6 @@ CREATE TABLE `culture_plan_trash` (
 
 LOCK TABLES `culture_plan_trash` WRITE;
 /*!40000 ALTER TABLE `culture_plan_trash` DISABLE KEYS */;
-INSERT INTO `culture_plan_trash` VALUES (1,51,NULL,'Lab 01','2023-05-03 22:23:38'),(2,45,NULL,'Lab 01','2023-05-03 22:41:16'),(3,45,NULL,'Lab 01','2023-05-03 22:41:25'),(4,45,NULL,'Lab 01','2023-05-03 22:42:01');
 /*!40000 ALTER TABLE `culture_plan_trash` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -380,7 +394,7 @@ CREATE TABLE `plant` (
 
 LOCK TABLES `plant` WRITE;
 /*!40000 ALTER TABLE `plant` DISABLE KEYS */;
-INSERT INTO `plant` VALUES (1,'Cây nha đam','Aloe vera','Cây nha đam là một loài cây lâu năm với nhiều công dụng trong y học và làm đẹp, được trồng phổ biến ở các vùng khí hậu ấm.',NULL),(2,'Cây măng tây','Asparagus officinalis','Cây măng tây là một loại rau xanh phổ biến được trồng và sử dụng trong nhiều món ăn trên toàn thế giới.',NULL),(3,'Rose','Rosa','Roses are a type of flowering shrub.',NULL),(4,'Tulip','Tulipa','Tulips are perennial, bulbous plants with showy flowers.',NULL),(5,'Sunflower','Helianthus','Sunflowers are usually tall annual or perennial plants.',NULL),(6,'Orchid','Orchidaceae','Orchids are a diverse and widespread family of flowering plants.',NULL),(7,'Daisy','Bellis perennis','Daisies are small perennial plants with a symmetrical flower.',NULL),(8,'Lily','Lilium','Lilies are herbaceous flowering plants growing from bulbs.',NULL),(9,'Daffodil','Narcissus','Daffodils are predominantly spring perennial plants with yellow flowers.',NULL),(10,'Violet','Viola','Violets are flowering plants with heart-shaped leaves.',NULL);
+INSERT INTO `plant` VALUES (1,'Cây nha đam','Aloe vera','Cây nha đam là một loài cây lâu năm với nhiều công dụng trong y học và làm đẹp, được trồng phổ biến ở các vùng khí hậu ấm.',NULL),(2,'Cây măng tây','Asparagus officinalis','Cây măng tây là một loại rau xanh phổ biến được trồng và sử dụng trong nhiều món ăn trên toàn thế giới.',NULL),(3,'Rose','Rosa','Roses are a type of flowering shrub.',NULL),(4,'Tulip','Tulipa','Tulips are perennial, bulbous plants with showy flowers.',NULL),(5,'Sunflower','Helianthus','Sunflowers are usually tall annual or perennial plants.',NULL),(6,'Orchid','Orchidaceae','Orchids are a diverse and widespread family of flowering plants.',NULL),(8,'Lily','Lilium','Lilies are herbaceous flowering plants growing from bulbs.',NULL),(9,'Daffodil','Narcissus','Daffodils are predominantly spring perennial plants with yellow flowers.',NULL),(10,'Violet','Viola','Violets are flowering plants with heart-shaped leaves.',NULL);
 /*!40000 ALTER TABLE `plant` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -487,4 +501,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-05-10 10:28:42
+-- Dump completed on 2023-05-12  8:50:45

@@ -349,7 +349,7 @@ exports.deleteTask = (req, res) => {
     catch (error) {
         res.status(500).send({
             status: false,
-            message: 'An error occured while deleting your record: ' + error.message
+            message: 'An error occurred while deleting your record: ' + error.message
         });
     }
         

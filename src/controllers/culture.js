@@ -187,7 +187,7 @@ exports.deleteCulture = (req, res) => {
     catch (error) {
         res.status(500).send({
             status: false,
-            message: 'An error occured while deleting your record'
+            message: 'An error occurred while deleting your record'
         });
     }
 

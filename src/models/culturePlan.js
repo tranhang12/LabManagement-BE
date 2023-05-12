@@ -2,26 +2,17 @@ const connection = require("../config/dbConnection");
 
 class CulturePlan {
   constructor(culturePlan) {
-    this.Activity_Type = culturePlan.Activity_Type;
     this.Area = culturePlan.Area;
     this.Plant_Type = culturePlan.Plant_Type;
-    this.Container_Quantity = culturePlan.Container_Quantity;
+    // this.Container_Quantity = culturePlan.Container_Quantity;
     this.Container_Type = culturePlan.Container_Type;
+    this.Created_Date = culturePlan.Created_Date;
     this.Transition_Time = culturePlan.Transition_Time;
-    this.Source_Area = culturePlan.Source_Area;
-    this.Number_of_Plants = culturePlan.Number_of_Plants;
+    this.BatchID = culturePlan.BatchID;
     this.Task_ID = culturePlan.Task_ID;
-    //this.Created_Date = culturePlan.Created_Date;
     this.Status = culturePlan.Status;
-    this.Initial_Area_Current_Quantity =
-      culturePlan.Initial_Area_Current_Quantity;
-    this.INITIAL_AREA_INITIAL_QUANTITY =
-      culturePlan.INITIAL_AREA_INITIAL_QUANTITY;
-    this.INITIAL_AREA_CURRENT_QUANTITY =
-      culturePlan.INITIAL_AREA_CURRENT_QUANTITY;
-    this.INITIAL_AREA_INITIAL_QUANTITY =
-      culturePlan.INITIAL_AREA_INITIAL_QUANTITY;
-    this.INITIAL_AREA_NAME = culturePlan.INITIAL_AREA_NAME;
+    this.Initial_Quantity = culturePlan.Initial_Quantity;
+    this.Current_Quantity = culturePlan.Current_Quantity;
     this.Remaining_Days = culturePlan.Remaining_Days;
   }
 
@@ -64,21 +55,20 @@ class CulturePlan {
   }
 
   static updateCulturePlan(culturePlan, result) {
-    const updateQuery = `UPDATE culture_plan SET Activity_Type = ?, Area = ?, Plant_Type = ?, Crop_Type = ?,Container_Quantity = ?, Container_Type = ?, Transition_Time = ?, Task_ID = ? ,Status = ?, Initial_Area_Current_Quantity = ?, INITIAL_AREA_INITIAL_QUANTITY = ?, Remaining_Days = ? ,INITIAL_AREA_NAME = ? WHERE Culture_Plan_ID = ?`;
+    const updateQuery = `UPDATE culture_plan SET Area = ?, Plant_Type = ?, Container_Type = ?, Created_Date = ?, Transition_Time = ?, Task_ID = ? ,Status = ?, Initial_Quantity = ?, Current_Quantity = ?, Remaining_Days = ? WHERE Culture_Plan_ID = ?`;
     const updateData = [
-      culturePlan.Activity_Type,
       culturePlan.Area,
       culturePlan.Plant_Type,
-      culturePlan.Crop_Type,
-      culturePlan.Container_Quantity,
+      // culturePlan.Container_Quantity,
       culturePlan.Container_Type,
+      culturePlan.Created_Date,
       culturePlan.Transition_Time,
+      culturePlan.BatchID,
       culturePlan.Task_ID,
       culturePlan.Status,
-      culturePlan.INITIAL_AREA_CURRENT_QUANTITY,
-      culturePlan.INITIAL_AREA_INITIAL_QUANTITY, 
+      culturePlan.Initial_Quantity,
+      culturePlan.Current_Quantity, 
       culturePlan.Remaining_Days,
-      culturePlan.INITIAL_AREA_NAME,
       culturePlan.Culture_Plan_ID,
     ];
     console.log(updateData)
@@ -93,16 +83,16 @@ class CulturePlan {
   }
 
   static deleteCulturePlan(Id, result) {
-    const deleteQuery = "DELETE FROM culture_plan WHERE Culture_Plan_ID = ?";
+    const deleteQuery = 'DELETE FROM culture_plan WHERE Culture_Plan_ID = ?'
 
     connection.query(deleteQuery, Id, (err, res) => {
-      if (err) {
-        result(err, null);
-      } else {
-        result(null, res.affectedRows);
-      }
+        if (err) {
+            result(err, null);
+        } else {
+            result(null, res.affectedRows);
+        }
     });
-  }
+}
 
 }
 
