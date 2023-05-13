@@ -35,11 +35,16 @@ class MovedArea {
         })
     }
 
-    static updateMovedAreaCurrentQuantity(MovedAreaId, currentQuantity) {
+    static updateMovedAreaCurrentQuantityAndTransitionTime(MovedAreaId, {Current_Quantity, Transition_Time}) {
         return new Promise((resolve, reject) => {
-            connection.query('UPDATE culture_plan_moved_area SET Current_Quantity = ? WHERE ID = ?', [currentQuantity, MovedAreaId], (err, res) => {
+            const updated = {
+                Current_Quantity
+              }
+              if (Transition_Time) {
+                updated.Transition_Time = Transition_Time
+              }
+            connection.query('UPDATE culture_plan_moved_area SET ? WHERE ID = ?', [updated, MovedAreaId], (err, res) => {
                 if (err) {
-                    console.log('error: ', err);
                     reject(err)
                 } else {
                     resolve(res)

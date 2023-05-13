@@ -106,7 +106,9 @@ exports.addharvestStorage = async (req, res) => {
                 Quantity: harvestQuantity,
                 Source_Area_Name: Area_Name
             }),
-            CulturePlan.updateCulturePlanCurrentQuantity(culturePlanId, culturePlan.Current_Quantity - harvestQuantity)
+            CulturePlan.updateCulturePlanCurrentQuantity(culturePlanId, {
+                Current_Quantity: culturePlan.Current_Quantity - harvestQuantity
+            })
             ])
         } else {
             const foundMovedAreaIndex = movedAreas.findIndex(e => e.Area_Name === Area_Name)
@@ -131,7 +133,9 @@ exports.addharvestStorage = async (req, res) => {
                 Quantity: harvestQuantity,
                 Source_Area_Name: Area_Name
             }),
-            MovedArea.updateMovedAreaCurrentQuantity(movedArea.ID, movedArea.Current_Quantity - harvestQuantity)
+            MovedArea.updateMovedAreaCurrentQuantityAndTransitionTime(movedArea.ID, {
+                Current_Quantity: movedArea.Current_Quantity - harvestQuantity,
+            })
             ])
         }
 

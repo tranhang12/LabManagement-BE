@@ -22,6 +22,7 @@ const { getRecordCount } = require('./controllers/count');
 const dbConnection = require('./config/dbConnection');
 const cors = require('cors');
 const morgan = require('morgan');
+require('./controllers/cronjob')
 
 const WebSocket = require('ws')
 const { handleSocket } = require('./controllers/notification');

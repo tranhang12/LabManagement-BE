@@ -10,6 +10,18 @@ class Tasks {
         this.Status = tasks.Status;
         this.Assigned_To = tasks.Assigned_To;
     }
+    static findAllOverDueTasks() {
+        return new Promise((resolve, reject) => {
+            connection.query(`SELECT * FROM tasks where Due_Date <= CURRENT_DATE and Status = ?`, ['Incomplete'], (err, res) => {
+                if (err) {
+                    reject(err)
+                } else {
+                    resolve(res)
+                }
+            });
+        })
+    }
+
 
     static findAll(result) {
         connection.query(`SELECT Tasks.*, Culture_Plan.BatchID

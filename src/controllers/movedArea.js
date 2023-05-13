@@ -78,7 +78,7 @@ exports.getmovedArea = (req, res) => {
 
 exports.addmovedArea = async (req, res) => {
     try {
-        const { Culture_Plan_ID, Source_Area_Name, Destination_Area_Name, Quantity } = req.body
+        const { Culture_Plan_ID, Source_Area_Name, Destination_Area_Name, Quantity, Transition_Time } = req.body
         if (
             !Culture_Plan_ID || !Source_Area_Name|| !Source_Area_Name || !Quantity
         ) {
@@ -107,8 +107,13 @@ exports.addmovedArea = async (req, res) => {
                 const newDestinationQuantity = movedArea[foundIndex].Current_Quantity + Quantity
                 
                 await Promise.all([
-                    MovedArea.updateMovedAreaCurrentQuantity(movedArea[foundIndex].ID, newDestinationQuantity),
-                    CulturePlan.updateCulturePlanCurrentQuantity(culturePlanId, newSourceQuantity)
+                    MovedArea.updateMovedAreaCurrentQuantityAndTransitionTime(movedArea[foundIndex].ID, {
+                        Current_Quantity: newDestinationQuantity,
+                        Transition_Time: Transition_Time
+                    }),
+                    CulturePlan.updateCulturePlanCurrentQuantity(culturePlanId, {
+                        Current_Quantity: newSourceQuantity,
+                    })
                 ])
 
                 return res.status(200).send({
@@ -117,14 +122,16 @@ exports.addmovedArea = async (req, res) => {
                 });
             } else {
                 await Promise.all([
-                    CulturePlan.updateCulturePlanCurrentQuantity(culturePlanId, newSourceQuantity),
+                    CulturePlan.updateCulturePlanCurrentQuantity(culturePlanId, {
+                        Current_Quantity: newSourceQuantity,
+                    }),
                     MovedArea.createMovedAreaPromise({
                         Culture_Plan_ID: culturePlanId,
                         Area_Name: Destination_Area_Name,
                         Initial_Quantity: Quantity,
                         Current_Quantity: Quantity,
                         Remaining_Days: 0,
-                        Transition_Time: new Date()
+                        Transition_Time: Transition_Time
                     })
                 ])
                 return res.status(200).send({
@@ -156,8 +163,13 @@ exports.addmovedArea = async (req, res) => {
             if (Destination_Area_Name === culturePlan.Area) {
                 const newDestinationCurrentQuantity = culturePlan.Current_Quantity + Quantity
                 await Promise.all([
-                    CulturePlan.updateCulturePlanCurrentQuantity(culturePlanId, newDestinationCurrentQuantity),
-                    MovedArea.updateMovedAreaCurrentQuantity(sourceMovedArea.ID, newSourceQuantity),
+                    CulturePlan.updateCulturePlanCurrentQuantity(culturePlanId, {
+                        Current_Quantity: newDestinationCurrentQuantity,
+                        Transaction_Time: Transition_Time
+                    }),
+                    MovedArea.updateMovedAreaCurrentQuantityAndTransitionTime(sourceMovedArea.ID, {
+                        Current_Quantity: newSourceQuantity
+                    }),
                 ])
                 return res.status(200).send({
                     status: true,
@@ -173,8 +185,13 @@ exports.addmovedArea = async (req, res) => {
                 const newDestinationQuantity = destinationMovedArea.Current_Quantity + Quantity
                 
                 await Promise.all([
-                    MovedArea.updateMovedAreaCurrentQuantity(sourceMovedArea.ID, newSourceQuantity),
-                    MovedArea.updateMovedAreaCurrentQuantity(destinationMovedArea.ID, newDestinationQuantity),
+                    MovedArea.updateMovedAreaCurrentQuantityAndTransitionTime(sourceMovedArea.ID, {
+                        Current_Quantity: newSourceQuantity
+                    }),
+                    MovedArea.updateMovedAreaCurrentQuantityAndTransitionTime(destinationMovedArea.ID, {
+                        Current_Quantity: newDestinationQuantity,
+                        Transition_Time: Transition_Time
+                    }),
                 ])
 
                 return res.status(200).send({
@@ -183,14 +200,16 @@ exports.addmovedArea = async (req, res) => {
                 });
             } else {
                 await Promise.all([
-                    MovedArea.updateMovedAreaCurrentQuantity(sourceMovedArea.ID, newSourceQuantity),
+                    MovedArea.updateMovedAreaCurrentQuantityAndTransitionTime(sourceMovedArea.ID, {
+                        Current_Quantity: newSourceQuantity
+                    }),
                     MovedArea.createMovedAreaPromise({
                         Culture_Plan_ID: culturePlanId,
                         Area_Name: Destination_Area_Name,
                         Initial_Quantity: Quantity,
                         Current_Quantity: Quantity,
                         Remaining_Days: 0,
-                        Transition_Time: new Date()
+                        Transition_Time: Transition_Time
                     })
                 ])
                 return res.status(200).send({

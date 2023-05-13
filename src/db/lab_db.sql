@@ -159,7 +159,7 @@ CREATE TABLE `culture_plan` (
 
 LOCK TABLES `culture_plan` WRITE;
 /*!40000 ALTER TABLE `culture_plan` DISABLE KEYS */;
-INSERT INTO `culture_plan` VALUES (63,'Lab 01','Cu dau','Pots','2023-05-31','2023-05-12 00:00:00','',100,100,'2023-05-12 16:23:49','Cu-12may'),(64,'Lab 02','Cay mia','Pots','2023-05-30','2023-05-12 00:00:00','',200,200,'2023-05-12 16:24:10','Ca-12may'),(65,'Lab 01','Ca rot','Pots','2023-05-29','2023-05-12 00:00:00','',100,100,'2023-05-12 16:24:42','Ca-12may'),(66,'Lab 01','Khoai tay','Pots','2023-05-27','2023-05-12 00:00:00','',200,200,'2023-05-12 16:24:56','Kh-12may');
+INSERT INTO `culture_plan` VALUES (63,'Lab 01','Cu dau','Pots','2023-05-01','2023-05-12 00:00:00','',91,100,'2023-05-13 19:25:01','Cu-12may'),(64,'Lab 02','Cay mia','Pots','2023-05-23','2023-05-12 00:00:00','',200,200,'2023-05-13 19:14:08','Ca-12may'),(65,'Lab 01','Ca rot','Pots','2023-05-29','2023-05-12 00:00:00','',100,100,'2023-05-12 16:24:42','Ca-12may'),(66,'Lab 01','Khoai tay','Pots','2023-05-27','2023-05-12 00:00:00','',200,200,'2023-05-12 16:24:56','Kh-12may');
 /*!40000 ALTER TABLE `culture_plan` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
@@ -227,13 +227,13 @@ CREATE TABLE `culture_plan_moved_area` (
   `Initial_Quantity` int(11) DEFAULT NULL,
   `Current_Quantity` int(11) DEFAULT NULL,
   `Created_Date` datetime DEFAULT CURRENT_TIMESTAMP,
-  `Transition_Time` datetime DEFAULT NULL,
+  `Transition_Time` date DEFAULT NULL,
   `Remaining_Days` int(11) DEFAULT '0',
   `last_updated` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`ID`),
   KEY `crop_read_moved_area_FK` (`Culture_Plan_ID`),
   CONSTRAINT `crop_read_moved_area_FK` FOREIGN KEY (`Culture_Plan_ID`) REFERENCES `culture_plan` (`Culture_Plan_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -242,6 +242,7 @@ CREATE TABLE `culture_plan_moved_area` (
 
 LOCK TABLES `culture_plan_moved_area` WRITE;
 /*!40000 ALTER TABLE `culture_plan_moved_area` DISABLE KEYS */;
+INSERT INTO `culture_plan_moved_area` VALUES (1,63,'Lab 02',5,20,'2023-05-13 19:00:11','2023-05-01',0,'2023-05-13 19:23:09');
 /*!40000 ALTER TABLE `culture_plan_moved_area` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -351,9 +352,8 @@ CREATE TABLE `notifications` (
   PRIMARY KEY (`Notification_ID`),
   KEY `notifications_FK` (`Assigned_To`),
   KEY `notifications_FK_Task` (`Task_ID`),
-  CONSTRAINT `notifications_FK` FOREIGN KEY (`Assigned_To`) REFERENCES `users` (`User_Name`),
-  CONSTRAINT `notifications_FK_Task` FOREIGN KEY (`Task_ID`) REFERENCES `tasks` (`Task_ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;
+  CONSTRAINT `notifications_FK` FOREIGN KEY (`Assigned_To`) REFERENCES `users` (`User_Name`)
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -362,7 +362,7 @@ CREATE TABLE `notifications` (
 
 LOCK TABLES `notifications` WRITE;
 /*!40000 ALTER TABLE `notifications` DISABLE KEYS */;
-INSERT INTO `notifications` VALUES (1,32,'tranhang12','{\"notificationType\":\"info\",\"message\":\"New task has been assigned to you: Hellll\"}',1);
+INSERT INTO `notifications` VALUES (1,32,'tranhang12','{\"notificationType\":\"info\",\"message\":\"New task has been assigned to you: Hellll\"}',1),(3,0,'tranhang12','{\"notificationType\":\"info\",\"message\":\"Crop Cu-12may on area Lab 01 is on transition time!\"}',1),(4,0,'tranhang12','{\"notificationType\":\"info\",\"message\":\"Crop Ca-12may on area Lab 02 is on transition time!\"}',1),(5,0,'tranhang12','{\"notificationType\":\"info\",\"message\":\"Crop Cu-12may on area Lab 02 is on transition time!\"}',1),(6,0,'tranhang12','{\"notificationType\":\"info\",\"message\":\"Crop Cu-12may on area Lab 01 is on transition time!\"}',1),(7,0,'tranhang12','{\"notificationType\":\"info\",\"message\":\"Crop Ca-12may on area Lab 02 is on transition time!\"}',1),(8,0,'tranhang12','{\"notificationType\":\"info\",\"message\":\"Crop Cu-12may on area Lab 02 is on transition time!\"}',1);
 /*!40000 ALTER TABLE `notifications` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -413,8 +413,8 @@ CREATE TABLE `tasks` (
   PRIMARY KEY (`Task_ID`),
   KEY `tasks_FK` (`Assigned_To`),
   KEY `tasks_culture_plan_Culture_Plan_ID_fk` (`Culture_Plan_ID`),
-  CONSTRAINT `tasks_FK` FOREIGN KEY (`Assigned_To`) REFERENCES `users` (`User_Name`),
-  CONSTRAINT `tasks_culture_plan_Culture_Plan_ID_fk` FOREIGN KEY (`Culture_Plan_ID`) REFERENCES `culture_plan` (`Culture_Plan_ID`)
+  CONSTRAINT `tasks_culture_plan_Culture_Plan_ID_fk` FOREIGN KEY (`Culture_Plan_ID`) REFERENCES `culture_plan` (`Culture_Plan_ID`),
+  CONSTRAINT `tasks_users_User_Name_fk` FOREIGN KEY (`Assigned_To`) REFERENCES `users` (`User_Name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=35 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -424,7 +424,7 @@ CREATE TABLE `tasks` (
 
 LOCK TABLES `tasks` WRITE;
 /*!40000 ALTER TABLE `tasks` DISABLE KEYS */;
-INSERT INTO `tasks` VALUES (7,'Move','Task 0','','urgent','2023-05-19','Completed','tranhang12',63),(8,'Harvest','Task 1','','normal','2023-05-29','Completed','tranhang12',63),(9,'Harvest','Task 2','','normal','2023-05-29','Completed','tranhang12',64),(10,'Harvest','Task 3','','normal','2023-05-29','Completed','tranhang12',63),(11,'Harvest','Task 4','','normal','2023-05-29','Completed','tranhang12',63),(12,'Harvest','Task 5','','normal','2023-05-29','Completed','tranhang12',63),(13,'Harvest','Task 6','','normal','2023-05-29','Completed','tranhang12',63),(14,'Harvest','Task 7','','normal','2023-05-29','Completed','tranhang12',63),(15,'Harvest','Task 8','','normal','2023-05-29','Completed','tranhang12',63),(16,'Harvest','Task 9','','normal','2023-05-29','Completed','tranhang12',63),(17,'Harvest','Task 10','','normal','2023-05-29','Completed','tranhang12',63),(18,'Harvest','Task 11','','normal','2023-05-29','Completed','tranhang12',63),(19,'Harvest','Task 12','','normal','2023-05-29','Completed','tranhang12',63),(20,'Harvest','Task 13','','normal','2023-05-29','Completed','tranhang12',63),(21,'Harvest','Task 14','','normal','2023-05-29','Completed','tranhang12',63),(22,'Harvest','Task 15','','normal','2023-05-29','Completed','tranhang12',63),(23,'Harvest','Task 16','','normal','2023-05-29','Completed','tranhang12',63),(24,'Move','Task 22','','normal','2023-05-24','Completed','admin123',63),(25,'Move','Task 33','','normal','2023-05-23','Completed','admin123',63),(26,'Move','123123','','normal','2023-05-16','Completed','admin123',63),(27,'Move','Task 32','','normal','2023-05-30','Completed','tranhang12',63),(28,'Move','Hello','','normal','2023-05-23','Completed','tranhang12',63),(29,'Move','Test','','urgent','2023-05-24','Completed','tranhang12',63),(30,'Move','Heeee','','normal','2023-05-24','Completed','tranhang12',63),(31,'Move','hyyyy','','normal','2023-05-16','Completed','tranhang12',63),(32,'Move','Hellll','','urgent','2023-05-22','Completed','tranhang12',63),(33,'Move','11111','','urgent','2023-05-22','Completed','tranhang12',63),(34,'Move','11111','','urgent','2023-05-22','Completed','tranhang12',63);
+INSERT INTO `tasks` VALUES (7,'Move','Task 0','','urgent','2023-05-19','Completed','tranhang12',63),(8,'Harvest','Task 1','','normal','2023-05-29','Completed','tranhang12',63),(9,'Harvest','Task 2','','normal','2023-05-01','Incomplete','tranhang12',64),(10,'Harvest','Task 3','','normal','2023-05-29','Completed','tranhang12',63),(11,'Harvest','Task 4','','normal','2023-05-29','Completed','tranhang12',63),(12,'Harvest','Task 5','','normal','2023-05-29','Completed','tranhang12',63),(13,'Harvest','Task 6','','normal','2023-05-29','Completed','tranhang12',63),(14,'Harvest','Task 7','','normal','2023-05-29','Completed','tranhang12',63),(15,'Harvest','Task 8','','normal','2023-05-29','Completed','tranhang12',63),(16,'Harvest','Task 9','','normal','2023-05-29','Completed','tranhang12',63),(17,'Harvest','Task 10','','normal','2023-05-29','Completed','tranhang12',63),(18,'Harvest','Task 11','','normal','2023-05-29','Completed','tranhang12',63),(19,'Harvest','Task 12','','normal','2023-05-29','Completed','tranhang12',63),(20,'Harvest','Task 13','','normal','2023-05-29','Completed','tranhang12',63),(21,'Harvest','Task 14','','normal','2023-05-29','Completed','tranhang12',63),(22,'Harvest','Task 15','','normal','2023-05-29','Completed','tranhang12',63),(23,'Harvest','Task 16','','normal','2023-05-29','Completed','tranhang12',63),(24,'Move','Task 22','','normal','2023-05-24','Completed','admin123',63),(25,'Move','Task 33','','normal','2023-05-23','Completed','admin123',63),(26,'Move','123123','','normal','2023-05-16','Completed','admin123',63),(27,'Move','Task 32','','normal','2023-05-30','Completed','tranhang12',63),(28,'Move','Hello','','normal','2023-05-23','Completed','tranhang12',63),(29,'Move','Test','','urgent','2023-05-24','Completed','tranhang12',63),(30,'Move','Heeee','','normal','2023-05-24','Completed','tranhang12',63),(31,'Move','hyyyy','','normal','2023-05-16','Completed','tranhang12',63),(32,'Move','Hellll','','urgent','2023-05-22','Completed','tranhang12',63),(33,'Move','11111','','urgent','2023-05-22','Completed','tranhang12',63),(34,'Move','11111','','urgent','2023-05-22','Completed','tranhang12',63);
 /*!40000 ALTER TABLE `tasks` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -495,4 +495,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-05-14  0:07:40
+-- Dump completed on 2023-05-14  2:27:38

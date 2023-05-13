@@ -54,11 +54,41 @@ class CulturePlan {
     })
   }
 
-  static updateCulturePlanCurrentQuantity = (Id, Current_Quantity) => {
+  static findAllOnTransition = () => {
     return new Promise((resolve, reject) => {
       connection.query(
-        "UPDATE culture_plan SET Current_Quantity = ? WHERE Culture_Plan_ID = ?",
-        [Current_Quantity, Id],
+        `select *
+        from (select Culture_Plan_ID, Area, BatchID
+              from culture_plan
+              where Transition_Time <= CURRENT_DATE and Current_Quantity > 0
+              union
+              select cp.Culture_Plan_ID, Area_Name as Area, cp.BatchID as BatchID
+              from culture_plan_moved_area ma
+                       left join culture_plan cp on cp.Culture_Plan_ID = ma.Culture_Plan_ID
+              where ma.Transition_Time <= CURRENT_DATE AND ma.Current_Quantity > 0) b`,
+        (err, res) => {
+          if (err) {
+            reject(err)
+          } else {
+            resolve(res)
+          }
+        }
+      );
+    })
+  }
+
+  static updateCulturePlanCurrentQuantity = (Id, {Current_Quantity, Transition_Time}) => {
+    return new Promise((resolve, reject) => {
+      const updated = {
+        Current_Quantity
+      }
+      if (Transition_Time) {
+        updated.Transition_Time = Transition_Time
+      }
+
+      connection.query(
+        "UPDATE culture_plan SET ? WHERE Culture_Plan_ID = ?",
+        [updated, Id],
         (err, res) => {
           if (err) {
             reject(err)

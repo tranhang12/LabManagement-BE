@@ -106,7 +106,9 @@ exports.addtrash = async(req, res) => {
                 Quantity: dumpQuantity,
                 Source_Area_Name: Area_Name
             }),
-            CulturePlan.updateCulturePlanCurrentQuantity(culturePlanId, culturePlan.Current_Quantity - dumpQuantity)
+            CulturePlan.updateCulturePlanCurrentQuantity(culturePlanId, {
+                Current_Quantity: culturePlan.Current_Quantity - dumpQuantity
+            })
             ])
 
         } else {
@@ -131,7 +133,9 @@ exports.addtrash = async(req, res) => {
                 Quantity: dumpQuantity,
                 Source_Area_Name: Area_Name
             }),
-            MovedArea.updateMovedAreaCurrentQuantity(movedArea.ID, culturePlan.Current_Quantity - dumpQuantity)
+            MovedArea.updateMovedAreaCurrentQuantityAndTransitionTime(movedArea.ID, {
+                Current_Quantity: movedArea.Current_Quantity - dumpQuantity,
+            })
             ])
         }
 
@@ -188,42 +192,3 @@ exports.updatetrash = (req, res) => {
         });
     }
 }
-
-// exports.deletetrash = (req, res) => {
-//     try {
-//         const Id = req.params.Id
-
-//         trash.deletetrash(Id, (err, result) => {
-//             if (err) {
-//                 res.status(500).send({
-//                     status: false,
-//                     message: 'Error deleting trash medium in database'
-//                 });
-//                 return;
-//             }
-
-//             else if (result < 1) {
-//                 res.status(200).send({
-//                     status: false,
-//                     message: 'trash does not exist with this id'
-//                 });
-//                 return;
-//             }
-
-//             res.status(200).send({
-//                 status: true,
-//                 message: 'trash deleted successfully.'
-//             });
-//         });
-//     }
-//     catch (error) {
-//         res.status(500).send({
-//             status: false,
-//             message: 'An error occurred while deleting your record'
-//         });
-//     }
-
-// };
-
-
-
