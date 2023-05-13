@@ -15,6 +15,7 @@ exports.isAuthenticated = async (req, res, next) => {
     if (req.user) {
         const user = await User.findByIdPromise(req.user.id)
         if (!user) return res.status(401).send({ status: false, message: 'Unauthorized' });
+        req.user.userInDb = user
         next();
     } else {
         res.status(401).send({ status: false, message: 'Unauthorized' });

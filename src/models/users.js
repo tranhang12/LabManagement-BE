@@ -66,6 +66,18 @@ class User {
         })
     }
 
+    static findAllAdmin() {
+        return new Promise((resolve, reject) => {
+            connection.query('SELECT * FROM users WHERE Is_Admin = 1', (err, res) => {
+                if (err) {
+                    reject(err)
+                } else {
+                    resolve(res)
+                }
+            });
+        })
+    }
+
 
     // static updateUser(user, result) {
     //     const updateQuery = 'UPDATE users SET Full_Name = ?, Phone_Number = ?, Is_Admin = ? WHERE User_Name = ?';

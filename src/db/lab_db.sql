@@ -201,7 +201,7 @@ CREATE TABLE `culture_plan_harvested_storage` (
   PRIMARY KEY (`ID`),
   KEY `crop_read_harvested_storage_FK` (`Culture_Plan_ID`),
   CONSTRAINT `crop_read_harvested_storage_FK` FOREIGN KEY (`Culture_Plan_ID`) REFERENCES `culture_plan` (`Culture_Plan_ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -233,7 +233,7 @@ CREATE TABLE `culture_plan_moved_area` (
   PRIMARY KEY (`ID`),
   KEY `crop_read_moved_area_FK` (`Culture_Plan_ID`),
   CONSTRAINT `crop_read_moved_area_FK` FOREIGN KEY (`Culture_Plan_ID`) REFERENCES `culture_plan` (`Culture_Plan_ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -261,7 +261,7 @@ CREATE TABLE `culture_plan_trash` (
   PRIMARY KEY (`ID`),
   KEY `crop_read_trash_FK` (`Culture_Plan_ID`),
   CONSTRAINT `crop_read_trash_FK` FOREIGN KEY (`Culture_Plan_ID`) REFERENCES `culture_plan` (`Culture_Plan_ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -353,7 +353,7 @@ CREATE TABLE `notifications` (
   KEY `notifications_FK_Task` (`Task_ID`),
   CONSTRAINT `notifications_FK` FOREIGN KEY (`Assigned_To`) REFERENCES `users` (`User_Name`),
   CONSTRAINT `notifications_FK_Task` FOREIGN KEY (`Task_ID`) REFERENCES `tasks` (`Task_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -362,6 +362,7 @@ CREATE TABLE `notifications` (
 
 LOCK TABLES `notifications` WRITE;
 /*!40000 ALTER TABLE `notifications` DISABLE KEYS */;
+INSERT INTO `notifications` VALUES (1,32,'tranhang12','{\"notificationType\":\"info\",\"message\":\"New task has been assigned to you: Hellll\"}',1);
 /*!40000 ALTER TABLE `notifications` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -414,7 +415,7 @@ CREATE TABLE `tasks` (
   KEY `tasks_culture_plan_Culture_Plan_ID_fk` (`Culture_Plan_ID`),
   CONSTRAINT `tasks_FK` FOREIGN KEY (`Assigned_To`) REFERENCES `users` (`User_Name`),
   CONSTRAINT `tasks_culture_plan_Culture_Plan_ID_fk` FOREIGN KEY (`Culture_Plan_ID`) REFERENCES `culture_plan` (`Culture_Plan_ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=35 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -423,7 +424,7 @@ CREATE TABLE `tasks` (
 
 LOCK TABLES `tasks` WRITE;
 /*!40000 ALTER TABLE `tasks` DISABLE KEYS */;
-INSERT INTO `tasks` VALUES (7,'Move','1231231231','','urgent','2023-05-19','Incomplete','tranhang12',63);
+INSERT INTO `tasks` VALUES (7,'Move','Task 0','','urgent','2023-05-19','Completed','tranhang12',63),(8,'Harvest','Task 1','','normal','2023-05-29','Completed','tranhang12',63),(9,'Harvest','Task 2','','normal','2023-05-29','Completed','tranhang12',64),(10,'Harvest','Task 3','','normal','2023-05-29','Completed','tranhang12',63),(11,'Harvest','Task 4','','normal','2023-05-29','Completed','tranhang12',63),(12,'Harvest','Task 5','','normal','2023-05-29','Completed','tranhang12',63),(13,'Harvest','Task 6','','normal','2023-05-29','Completed','tranhang12',63),(14,'Harvest','Task 7','','normal','2023-05-29','Completed','tranhang12',63),(15,'Harvest','Task 8','','normal','2023-05-29','Completed','tranhang12',63),(16,'Harvest','Task 9','','normal','2023-05-29','Completed','tranhang12',63),(17,'Harvest','Task 10','','normal','2023-05-29','Completed','tranhang12',63),(18,'Harvest','Task 11','','normal','2023-05-29','Completed','tranhang12',63),(19,'Harvest','Task 12','','normal','2023-05-29','Completed','tranhang12',63),(20,'Harvest','Task 13','','normal','2023-05-29','Completed','tranhang12',63),(21,'Harvest','Task 14','','normal','2023-05-29','Completed','tranhang12',63),(22,'Harvest','Task 15','','normal','2023-05-29','Completed','tranhang12',63),(23,'Harvest','Task 16','','normal','2023-05-29','Completed','tranhang12',63),(24,'Move','Task 22','','normal','2023-05-24','Completed','admin123',63),(25,'Move','Task 33','','normal','2023-05-23','Completed','admin123',63),(26,'Move','123123','','normal','2023-05-16','Completed','admin123',63),(27,'Move','Task 32','','normal','2023-05-30','Completed','tranhang12',63),(28,'Move','Hello','','normal','2023-05-23','Completed','tranhang12',63),(29,'Move','Test','','urgent','2023-05-24','Completed','tranhang12',63),(30,'Move','Heeee','','normal','2023-05-24','Completed','tranhang12',63),(31,'Move','hyyyy','','normal','2023-05-16','Completed','tranhang12',63),(32,'Move','Hellll','','urgent','2023-05-22','Completed','tranhang12',63),(33,'Move','11111','','urgent','2023-05-22','Completed','tranhang12',63),(34,'Move','11111','','urgent','2023-05-22','Completed','tranhang12',63);
 /*!40000 ALTER TABLE `tasks` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -494,4 +495,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-05-13  1:03:46
+-- Dump completed on 2023-05-14  0:07:40
