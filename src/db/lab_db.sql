@@ -164,7 +164,7 @@ CREATE TABLE `culture_plan` (
 
 LOCK TABLES `culture_plan` WRITE;
 /*!40000 ALTER TABLE `culture_plan` DISABLE KEYS */;
-INSERT INTO `culture_plan` VALUES (6,'Lab 01','Xương rồng','Pots','0004-05-23',NULL,NULL,NULL,0,0,0,'2023-05-08 14:05:45',NULL),(45,'Lab 01','Test','Box','2018-04-23',1,'2023-05-03 17:08:02','delete',5,2,0,'2023-05-10 07:46:54',NULL),(50,'Lab 01','Test','Pots','2018-04-23',1,'2023-05-03 17:11:00','location change',5,2,0,'2023-05-10 07:46:54',NULL),(54,'Lab 01','Test','Pots','2018-04-23',1,'2023-05-03 18:45:47','location change',5,2,1,'2023-05-10 07:46:54',NULL),(56,'Lab 02','Asparagus plant','Pots','2024-12-23',NULL,'2023-05-10 07:56:41',NULL,25,25,0,'2023-05-10 07:56:41',NULL),(57,'Lab 02','Aloe vera plant','Pots','2023-06-23',NULL,'2023-05-10 15:40:13',NULL,30,30,0,'2023-05-10 15:40:13',NULL),(59,'Lab 03','Aloe vera plant','Pots','2023-07-23',NULL,'2023-05-10 15:47:26',NULL,30,30,0,'2023-05-10 15:47:26',NULL),(61,'Lab 03','Banana','Pots','2023-09-13',NULL,'2023-05-11 10:25:29',NULL,50,50,0,'2023-05-11 10:25:29','Ba-11may');
+INSERT INTO `culture_plan` VALUES (6,'Lab 01','Xương rồng','Pots','0004-05-23',NULL,NULL,NULL,0,0,0,'2023-05-12 01:56:25','ba-10may'),(45,'Lab 01','Test','Box','2018-04-23',1,'2023-05-03 17:08:02','delete',5,2,0,'2023-05-12 01:56:25','ca-10may'),(50,'Lab 01','Test','Pots','2018-04-23',1,'2023-05-03 17:11:00','location change',5,2,0,'2023-05-12 01:56:25','anna-12may'),(54,'Lab 01','Test','Pots','2018-04-23',1,'2023-05-03 18:45:47','location change',5,2,1,'2023-05-12 01:56:25','ban-11may'),(56,'Lab 02','Asparagus plant','Pots','2024-12-23',NULL,'2023-05-10 07:56:41',NULL,25,25,0,'2023-05-12 01:56:25','alo-12may'),(57,'Lab 02','Aloe vera plant','Pots','2023-06-23',NULL,'2023-05-10 15:40:13',NULL,30,30,0,'2023-05-12 01:56:25','hoho-11may'),(59,'Lab 03','Aloe vera plant','Pots','2023-07-23',NULL,'2023-05-10 15:47:26',NULL,30,30,0,'2023-05-12 01:56:25','hana-9may'),(61,'Lab 03','Banana','Pots','2023-09-13',NULL,'2023-05-11 10:25:29',NULL,50,50,0,'2023-05-11 10:25:29','Ba-11may');
 /*!40000 ALTER TABLE `culture_plan` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
@@ -501,4 +501,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-05-12  8:50:45
+-- Dump completed on 2023-05-12  9:00:17
