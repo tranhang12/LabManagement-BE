@@ -2,15 +2,15 @@ const connection = require('../config/dbConnection');
 
 class HarvestStorage {
     constructor(harvestStorage) {
-        this.Crop_UID = harvestStorage.Crop_UID;
+        this.Culture_plan_ID = harvestStorage.Culture_plan_ID;
         this.Quantity = harvestStorage.Quantity;
-        this.Produced_Quantity = harvestStorage.Produced_Quantity;
-        this.Source_Area_UID = harvestStorage.Source_Area_UID;
         this.Source_Area_Name = harvestStorage.Source_Area_Name
     }
 
     static findAll(result) {
-        connection.query('SELECT * FROM culture_plan_harvested_storage', (err, res) => {
+        connection.query(`SELECT cphs.*, cp.BatchID, cp.Plant_Type, cp.Container_Type 
+        FROM culture_plan_harvested_storage cphs 
+        JOIN culture_plan cp ON cphs.Culture_Plan_ID = cp.Culture_Plan_ID`, (err, res) => {
             if (err) {
                 console.log('error: ', err);
                 result(err, null);
@@ -42,18 +42,18 @@ class HarvestStorage {
         });
     }
     
-    static updateharvestStorage(harvestStorage, result) {
-        const updateQuery = 'UPDATE culture_plan_harvested_storage SET Crop_UID = ?, Produced_Quantity = ?, Source_Area_UID = ?, Source_Area_Name = ?, Quantity = ?  WHERE ID = ?';
-        const updateData = [harvestStorage.Crop_UID, harvestStorage.Produced_Quantity, harvestStorage.Source_Area_UID, harvestStorage.Source_Area_Name, harvestStorage.Quantity,  harvestStorage.Id];
+    // static updateharvestStorage(harvestStorage, result) {
+    //     const updateQuery = 'UPDATE culture_plan_harvested_storage SET Crop_UID = ?, Produced_Quantity = ?, Source_Area_UID = ?, Source_Area_Name = ?, Quantity = ?  WHERE ID = ?';
+    //     const updateData = [harvestStorage.Crop_UID, harvestStorage.Produced_Quantity, harvestStorage.Source_Area_UID, harvestStorage.Source_Area_Name, harvestStorage.Quantity,  harvestStorage.Id];
 
-        connection.query(updateQuery, updateData, (err, res) => {
-            if (err) {
-                result(err, null);
-            } else {
-                result(null, res.affectedRows);
-            }
-        });
-    }
+    //     connection.query(updateQuery, updateData, (err, res) => {
+    //         if (err) {
+    //             result(err, null);
+    //         } else {
+    //             result(null, res.affectedRows);
+    //         }
+    //     });
+    // }
 
     static createHarvestStoragePromise(harvestStorage) {
         return new Promise((resolve, reject) => {

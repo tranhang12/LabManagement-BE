@@ -1,80 +1,113 @@
 const encryption = require('../helper/encryption');
 const auth = require('basic-auth');
 const Culture = require('../models/culture');
-
+const db = require('../config/dbConnection');
 
 exports.getAllCultures = (req, res) => {
-    try {
-        Culture.findAll((err, result) => {
-            if (err) {
-                res.status(500).send({
-                    status: false,
-                    message: 'Error retrieving culture data from database:' + err.message
-                });
-                return;
-            }
-            if (result != undefined) {
+    const sql = `
+      SELECT c.*, p.Plant_Name, cm.Culture_Medium_Name
+      FROM culture c
+      JOIN plant p ON c.Plant_ID = p.Plant_ID
+      JOIN culture_medium_relation cmr ON c.Culture_ID = cmr.culture_id
+      JOIN culture_medium cm ON cmr.culture_medium_id = cm.Culture_Medium_ID
+    `;
+  
+    db.query(sql, (err, result) => {
+      if (err) {
+        res.status(500).send({ status: 'error', message: err.message });
+      } else {
+        res.send({ status: 'success', result: result });
+      }
+    });
+  };
+  
+  exports.getCulture = (req, res) => {
+    const sql = `
+      SELECT c.*, p.Plant_Name, cm.Culture_Medium_Name
+      FROM culture c
+      JOIN plant p ON c.Plant_ID = p.Plant_ID
+      JOIN culture_medium_relation cmr ON c.Culture_ID = cmr.culture_id
+      JOIN culture_medium cm ON cmr.culture_medium_id = cm.Culture_Medium_ID
+      WHERE c.Culture_ID = ?
+    `;
+  
+    db.query(sql, [req.params.id], (err, result) => {
+      if (err) throw err;
+      res.send(result);
+    });
+  };
+// exports.getAllCultures = (req, res) => {
+//     try {
+//         Culture.findAll((err, result) => {
+//             if (err) {
+//                 res.status(500).send({
+//                     status: false,
+//                     message: 'Error retrieving culture data from database:' + err.message
+//                 });
+//                 return;
+//             }
+//             if (result != undefined) {
 
-                res.status(200).send({
-                    status: true,
-                    message: 'Success',
-                    result: result
-                });
-            } else {
-                res.status(500).send({
-                    status: false,
-                    message: 'Something went wrong'
-                });
-                return;
-            }
-        });
+//                 res.status(200).send({
+//                     status: true,
+//                     message: 'Success',
+//                     result: result
+//                 });
+//             } else {
+//                 res.status(500).send({
+//                     status: false,
+//                     message: 'Something went wrong'
+//                 });
+//                 return;
+//             }
+//         });
 
-    } catch (error) {
-        res.status(500).send({
-            status: false,
-            message: 'Error in getting data from Database:' + error.message
-        });
-    }
-};
+//     } catch (error) {
+//         res.status(500).send({
+//             status: false,
+//             message: 'Error in getting data from Database:' + error.message
+//         });
+//     }
+// };
 
-exports.getCulture = (req, res) => {
-    try {
-        let { Id } = req.params
-        console.log(req.params)
+// exports.getCulture = (req, res) => {
+//     try {
+//         let { Id } = req.params
+//         console.log(req.params)
 
-        Culture.findById(Id, (err, result) => {
-            if (err) {
-                res.status(500).send({
-                    status: false,
-                    message: 'Error retrieving culture data from database:' + err.message
-                });
-                return;
-            }
-            if (result != undefined) {
-                let response = {
-                    status: true,
-                    message: 'Success',
-                    result: result
-                }
+//         Culture.findById(Id, (err, result) => {
+//             if (err) {
+//                 res.status(500).send({
+//                     status: false,
+//                     message: 'Error retrieving culture data from database:' + err.message
+//                 });
+//                 return;
+//             }
+//             if (result != undefined) {
+//                 let response = {
+//                     status: true,
+//                     message: 'Success',
+//                     result: result
+//                 }
 
-                res.status(200).send(response);
+//                 res.status(200).send(response);
 
-            } else {
-                res.status(500).send({
-                    status: false,
-                    message: 'Something went wrong'
-                });
-                return;
-            }
-        });
+//             } else {
+//                 res.status(500).send({
+//                     status: false,
+//                     message: 'Something went wrong'
+//                 });
+//                 return;
+//             }
+//         });
 
-    } catch (error) {
-        res.status(500).send({
-            status: false,
-            message: 'Error in getting data from Database:' + error.message
-        });
-    }
-};
+//     } catch (error) {
+//         res.status(500).send({
+//             status: false,
+//             message: 'Error in getting data from Database:' + error.message
+//         });
+//     }
+// };
 
 exports.addCulture = (req, res) => {
     try {
