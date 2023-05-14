@@ -1,6 +1,7 @@
 const encryption = require('../helper/encryption');
 const auth = require('basic-auth');
 const MovedArea = require('../models/movedArea');
+const CulturePlan = require('../models/culturePlan');
 
 
 exports.getAllmovedAreas = (req, res) => {
@@ -40,7 +41,6 @@ exports.getAllmovedAreas = (req, res) => {
 exports.getmovedArea = (req, res) => {
     try {
         let { Id } = req.params
-        console.log(req.params)
 
         movedArea.findById(Id, (err, result) => {
             if (err) {
@@ -76,42 +76,151 @@ exports.getmovedArea = (req, res) => {
     }
 };
 
-exports.addmovedArea = (req, res) => {
+exports.addmovedArea = async (req, res) => {
     try {
-        const movedArea = new MovedArea(req.body);
+        const { Culture_Plan_ID, Source_Area_Name, Destination_Area_Name, Quantity, Transition_Time } = req.body
+        if (
+            !Culture_Plan_ID || !Source_Area_Name|| !Source_Area_Name || !Quantity
+        ) {
+            return res.status(400).send('Missing or invalid input');
+        }
+        const culturePlanId = +Culture_Plan_ID;
+        // const movedArea = new MovedArea(req.body);
 
-        MovedArea.createmovedArea(movedArea, (err, result) => {
-            if (err) {
-                if (err.code.includes("ER_NO_REFERENCED_ROW")) {
-                    res.status(500).send({
-                        status: false,
-                        message: 'Foreign Key Constraint is failing'
-                    });
-                }
-                else {
-                    res.status(500).send({
-                        status: false,
-                        message: 'Error in creating movedArea in database:' + err.message
-                    });
-                }
-                return;
-            }
+        const culturePlan = await CulturePlan.findByIdPromise(culturePlanId)
+        const movedArea = await MovedArea.findAllByCulturePlanIdPromise(culturePlanId)
 
-            else if (result < 1) {
-                res.status(500).send({
+        if (culturePlan.Area === Source_Area_Name) {
+            // Move culture plan from initial area
+            const sourceQuantity = culturePlan.Current_Quantity
+            if (sourceQuantity < Quantity) {
+                return res.status(400).send({
                     status: false,
-                    message: 'Error in creating movedArea in database'
+                    message: 'The transfer quantity exceeds the current quantity'
                 });
-                return;
             }
 
-            res.status(200).send({
-                status: true,
-                message: 'Record added successfully'
-            });
-        });
+            const newSourceQuantity = sourceQuantity - Quantity 
+            const foundIndex = movedArea.findIndex(e => e.Area_Name === Destination_Area_Name)
+            if (foundIndex !== -1) {
+                // If Destination_Area_Name already in moved area
+                const newDestinationQuantity = movedArea[foundIndex].Current_Quantity + Quantity
+                
+                await Promise.all([
+                    MovedArea.updateMovedAreaCurrentQuantityAndTransitionTime(movedArea[foundIndex].ID, {
+                        Current_Quantity: newDestinationQuantity,
+                        Transition_Time: Transition_Time
+                    }),
+                    CulturePlan.updateCulturePlanCurrentQuantity(culturePlanId, {
+                        Current_Quantity: newSourceQuantity,
+                    })
+                ])
+
+                return res.status(200).send({
+                    status: true,
+                    message: 'Record added successfully'
+                });
+            } else {
+                await Promise.all([
+                    CulturePlan.updateCulturePlanCurrentQuantity(culturePlanId, {
+                        Current_Quantity: newSourceQuantity,
+                    }),
+                    MovedArea.createMovedAreaPromise({
+                        Culture_Plan_ID: culturePlanId,
+                        Area_Name: Destination_Area_Name,
+                        Initial_Quantity: Quantity,
+                        Current_Quantity: Quantity,
+                        Remaining_Days: 0,
+                        Transition_Time: Transition_Time
+                    })
+                ])
+                return res.status(200).send({
+                    status: true,
+                    message: 'Record added successfully'
+                });
+            }         
+
+        } else {
+            // Move culture plan from moved area
+            const sourceMovedAreaIndex = movedArea.findIndex(e => e.Area_Name === Source_Area_Name)
+            if (sourceMovedAreaIndex === -1) {
+                return res.status(400).send({
+                    status: false,
+                    message: 'Transfer area not found'
+                });
+            }
+
+            const sourceMovedArea = movedArea[sourceMovedAreaIndex]
+            const sourceQuantity = sourceMovedArea.Current_Quantity
+            if (sourceQuantity < Quantity) {
+                return res.status(400).send({
+                    status: false,
+                    message: 'The transfer quantity exceeds the current quantity'
+                });
+            }
+            const newSourceQuantity = sourceQuantity - Quantity
+
+            if (Destination_Area_Name === culturePlan.Area) {
+                const newDestinationCurrentQuantity = culturePlan.Current_Quantity + Quantity
+                await Promise.all([
+                    CulturePlan.updateCulturePlanCurrentQuantity(culturePlanId, {
+                        Current_Quantity: newDestinationCurrentQuantity,
+                        Transaction_Time: Transition_Time
+                    }),
+                    MovedArea.updateMovedAreaCurrentQuantityAndTransitionTime(sourceMovedArea.ID, {
+                        Current_Quantity: newSourceQuantity
+                    }),
+                ])
+                return res.status(200).send({
+                    status: true,
+                    message: 'Record added successfully'
+                });
+            }
+
+
+            const destinationMovedAreaIndex = movedArea.findIndex(e => e.Area_Name === Destination_Area_Name)
+            if (destinationMovedAreaIndex !== -1) {
+                // If Destination_Area_Name already in moved area
+                const destinationMovedArea = movedArea[destinationMovedAreaIndex]
+                const newDestinationQuantity = destinationMovedArea.Current_Quantity + Quantity
+                
+                await Promise.all([
+                    MovedArea.updateMovedAreaCurrentQuantityAndTransitionTime(sourceMovedArea.ID, {
+                        Current_Quantity: newSourceQuantity
+                    }),
+                    MovedArea.updateMovedAreaCurrentQuantityAndTransitionTime(destinationMovedArea.ID, {
+                        Current_Quantity: newDestinationQuantity,
+                        Transition_Time: Transition_Time
+                    }),
+                ])
+
+                return res.status(200).send({
+                    status: true,
+                    message: 'Record added successfully'
+                });
+            } else {
+                await Promise.all([
+                    MovedArea.updateMovedAreaCurrentQuantityAndTransitionTime(sourceMovedArea.ID, {
+                        Current_Quantity: newSourceQuantity
+                    }),
+                    MovedArea.createMovedAreaPromise({
+                        Culture_Plan_ID: culturePlanId,
+                        Area_Name: Destination_Area_Name,
+                        Initial_Quantity: Quantity,
+                        Current_Quantity: Quantity,
+                        Remaining_Days: 0,
+                        Transition_Time: Transition_Time
+                    })
+                ])
+                return res.status(200).send({
+                    status: true,
+                    message: 'Record added successfully'
+                });
+            }      
+        }
     }
     catch (error) {
+        console.log(error)
         res.status(500).send({
             status: false,
             message: 'Error in creating movedArea in database:' + error.message

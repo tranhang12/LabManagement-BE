@@ -1,6 +1,7 @@
 require('dotenv').config();
 
 const express = require('express');
+const { createServer } = require('http');
 const bodyParser = require('body-parser');
 const userRoutes = require('./routes/users');
 const cultureMediumRoutes = require('./routes/cultureMedium');
@@ -20,12 +21,18 @@ const culturePlanRoute = require('./routes/culturePlanRoutes');
 const { getRecordCount } = require('./controllers/count');
 const dbConnection = require('./config/dbConnection');
 const cors = require('cors');
+const morgan = require('morgan');
+require('./controllers/cronjob')
 
+const WebSocket = require('ws')
+const { handleSocket } = require('./controllers/notification');
 const app = express();
+const server = createServer(app);
+const wss = new WebSocket.Server({ server });
 app.use(cors());
 // Parse incoming request bodies as JSON
 app.use(bodyParser.json());
-
+app.use(morgan('dev'))
 // Route handlers
 app.use('/api/users', userRoutes);
 app.use('/api/', cultureMediumRoutes);
@@ -56,20 +63,25 @@ app.get('/api/recordCounts', async (req, res) => {
     }
   });
 
+wss.on('connection', (ws) => {
+    handleSocket(ws);
+});
+// wss.on("close", (ws) => {
+//   console.log(ws)
+//   console.log("disconnect")
+// })
 // Connect to database
 dbConnection.connect((err) => {
     if (err) {
         console.log(err)
-
     }
     else {
         console.log('Connected to MySQL database');
     }
-
 });
 
 // Start server
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
+server.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });

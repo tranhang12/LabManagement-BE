@@ -1,5 +1,6 @@
 const expressJwt = require('express-jwt');
 const jwt = require('jsonwebtoken');
+const User = require('../models/users');
 const secret = process.env.JWT_SECRET_KEY;
 
 exports.sign = (payload) => {
@@ -10,8 +11,11 @@ exports.jwtMiddleware = () => {
     return expressJwt({ secret, algorithms: ['HS256'] });
 };
 
-exports.isAuthenticated = (req, res, next) => {
+exports.isAuthenticated = async (req, res, next) => {
     if (req.user) {
+        const user = await User.findByIdPromise(req.user.id)
+        if (!user) return res.status(401).send({ status: false, message: 'Unauthorized' });
+        req.user.userInDb = user
         next();
     } else {
         res.status(401).send({ status: false, message: 'Unauthorized' });

@@ -40,6 +40,18 @@ class Trash {
     });
   }
 
+  static createTrashPromise(trash) {
+    return new Promise((resolve, reject) => {
+      connection.query("INSERT INTO culture_plan_trash SET ?", trash, (err, res) => {
+        if (err) {
+          reject(err)
+        } else {
+          resolve(res)
+        }
+      });
+    })
+  }
+
   static updatetrash(trash, result) {
     const currentDate = new Date()
       .toISOString()

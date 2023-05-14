@@ -3,34 +3,30 @@ const Tasks = require('../models/tasks');
 const User = require('../models/users');
 const encryption = require('../helper/encryption');
 const auth = require('basic-auth');
+const { socketStore } = require('./notification');
+const Notification = require('../models/notification');
 
-exports.getAllTasks = (req, res) => {
+exports.getAllTasks = async (req, res) => {
     try {
-        Tasks.findAll((err, result) => {
-            if (err) {
-                res.status(500).send({
-                    status: false,
-                    message: 'Error retrieving tasks data from database: ' + err.message
-                });
-                return;
-            }
-            if (result != undefined) {
-
-                res.status(200).send({
-                    status: true,
-                    message: 'Success',
-                    result: result
-                });
-            } else {
-                res.status(500).send({
-                    status: false,
-                    message: 'Something went wrong'
-                });
-                return;
-            }
+        const { user } = req
+        const { Culture_Plan_ID, Status, Priority } = req.query
+        let assigneeName = ''
+        if (!user.isAdmin) {
+            assigneeName = user.username
+        }
+        const tasks = await Tasks.findAllPromise({
+            assigneeName,
+            Culture_Plan_ID: +Culture_Plan_ID,
+            Status,
+            Priority,
+        })
+        res.status(200).send({
+            status: true,
+            message: 'Success',
+            result: tasks
         });
-
     } catch (error) {
+        console.log(error)
         res.status(500).send({
             status: false,
             message: 'Error in getting data from Database: ' + error.message
@@ -76,95 +72,44 @@ exports.getTask = (req, res) => {
     }
 };
 
-exports.addTask = (req, res) => {
+exports.addTask = async (req, res) => {
     try {
-        const user = auth(req);
 
-        if (user == undefined) {
-            res.status(401).send({
-                status: false,
-                message: 'Unauthorized to create task'
-            });
-            return;
-        }
+        const {
+            Culture_Plan_ID,
+            Task_Category,
+            Title,
+            Description,
+            Priority,
+            Due_Date,
+            Status = "Incomplete",
+            Assigned_To
+        } = req.body
 
-        const username = user.name;
-        const password = user.pass;
+        const result = await Tasks.createTaskPromise({
+            Culture_Plan_ID,
+            Task_Category,
+            Title,
+            Description,
+            Priority,
+            Due_Date,
+            Status,
+            Assigned_To,
+        })
 
-        User.findByUsername(username, (err, user) => {
-            if (err) {
-                res.status(500).send({
-                    status: false,
-                    message: 'Error retrieving user from database: ' + err.message
-                });
-                return;
-            }
-    
-            if (!user) {
-                res.status(500).send({
-                    status: false,
-                    message: 'Invalid username or password'
-                });
-                return;
-            }
+        Notification.notifyTaskStatus({
+            Task_ID: result.insertId,
+            Status,
+            Title,
+        }, [Assigned_To]).catch(console.log)
 
-            const result = encryption.compare(password, user.User_Password);
-            if (result === true) {
-                if (!user.Is_Admin) {
-                    res.status(401).send({
-                        status: false,
-                        message: 'Unauthorized to create task'
-                    });
-                    return;
-                }
-
-                const task = new Tasks(req.body);
-
-                if (req.body.Status == undefined || req.body.Status == "") {
-                    task.Status = "Incomplete";
-                }
-
-                Tasks.createTask(task, (err, result) => {
-                    if (err) {
-                        if (err.code.includes("ER_NO_REFERENCED_ROW")) {
-                            res.status(500).send({
-                                status: false,
-                                message: 'Assigned To user does not exist'
-                            });
-                        }
-                        else {
-                            res.status(500).send({
-                                status: false,
-                                message: 'Error in creating task in database'
-                            });
-                        }
-                        return;
-                    }
-
-                    else if (result < 1) {
-                        res.status(500).send({
-                            status: false,
-                            message: 'Error in creating task in database'
-                        });
-                        return;
-                    }
-
-                    res.status(200).send({
-                        status: true,
-                        message: 'Record added successfully'
-                    });
-                });
-            }
-            else {
-                res.status(401).send({
-                    status: false,
-                    message: 'Unauthorized to create task'
-                });
-                return;
-            }
+        return res.status(200).send({
+            status: true,
+            message: 'Task created successfully'
         });
     }
     catch (error) {
+        console.log(error)
         res.status(500).send({
             status: false,
             message: 'Error in creating task in database: ' + error.message
@@ -172,97 +117,49 @@ exports.addTask = (req, res) => {
     }
 }
 
-exports.updateTask = (req, res) => {
+exports.updateTask = async (req, res) => {
     try {
-        const user = auth(req);
 
-        if (user == undefined) {
-            res.status(401).send({
+        const { user } = req
+        const { Id } = req.params
+        const { Status } = req.body
+        const task = await Tasks.findByIdPromise(+Id)
+        if (!task) {
+            return res.status(400).send({
                 status: false,
-                message: 'Unauthorized to update task'
-            });
-            return;
+                message: 'Task not found'
+            })
+        }
+        if (task.Assigned_To !== user.username && !user.isAdmin) {
+            return res.status(401).send({
+                status: false,
+                message: 'Operation not permitted'
+            })
+        }
+        if (!["Completed", "Incomplete".includes(Status)]) {
+            return res.status(400).send({
+                status: false,
+                message: 'Invalid task status'
+            })
+        }
+        await Tasks.updateTaskStatusPromise(task.Task_ID, Status)
+
+        const admins = await User.findAllAdmin()
+        if (admins.length > 0) {
+            await Notification.notifyTaskStatus({
+                ...task,
+                Status,
+            }, admins.map(e => e.User_Name))
         }
 
-        const username = user.name;
-        const password = user.pass;
+        return res.status(200).send({
+            status: true,
+            message: 'Task updated successfully'
+        })
 
-        User.findByUsername(username, (err, user) => {
-            if (err) {
-                res.status(500).send({
-                    status: false,
-                    message: 'Error retrieving user from database: ' + err.message
-                });
-                return;
-            }
-    
-            if (!user) {
-                res.status(500).send({
-                    status: false,
-                    message: 'Invalid username or password'
-                });
-                return;
-            }
-
-            const result = encryption.compare(password, user.User_Password);
-            if (result === true) {
-                if (!user.Is_Admin) {
-                    res.status(401).send({
-                        status: false,
-                        message: 'Unauthorized to update task'
-                    });
-                    return;
-                }
-                
-                let task = new Tasks(req.body);
-                task.Task_ID = req.params.Id;
-
-                if (req.body.Status == undefined || req.body.Status == "") {
-                    task.Status = "Incomplete";
-                }
-
-                Tasks.updateTask(task, (err, result) => {
-                    if (err) {
-                        if (err.code.includes("ER_NO_REFERENCED_ROW")) {
-                            res.status(500).send({
-                                status: false,
-                                message: 'Assigned To user does not exist'
-                            });
-                        }
-                        else {
-                            res.status(500).send({
-                                status: false,
-                                message: 'Error in updating task in database: ' + err.message
-                            });
-                        }
-                        return;
-                    }
-
-                    else if (result < 1) {
-                        console.log(result)
-                        res.status(500).send({
-                            status: false,
-                            message: 'Error in updating task in database'
-                        });
-                        return;
-                    }
-
-                    res.status(200).send({
-                        status: true,
-                        message: 'Record updated successfully'
-                    });
-                });
-            }
-            else {
-                res.status(401).send({
-                    status: false,
-                    message: 'Unauthorized to update task'
-                });
-                return;
-            }
-        });
     }
     catch (error) {
+        console.log(error)
         res.status(500).send({
             status: false,
             message: 'Error in updating task in database. Record may not exist: ' + error.message
@@ -293,7 +190,7 @@ exports.deleteTask = (req, res) => {
                 });
                 return;
             }
-    
+
             if (!user) {
                 res.status(500).send({
                     status: false,
@@ -322,7 +219,7 @@ exports.deleteTask = (req, res) => {
                         });
                         return;
                     }
-                    
+
                     else if (result < 1) {
                         res.status(200).send({
                             status: false,
@@ -335,7 +232,7 @@ exports.deleteTask = (req, res) => {
                         status: true,
                         message: 'Task deleted successfully.'
                     });
-                });  
+                });
             }
             else {
                 res.status(401).send({
@@ -352,7 +249,7 @@ exports.deleteTask = (req, res) => {
             message: 'An error occurred while deleting your record: ' + error.message
         });
     }
-        
+
 };
 
 

@@ -6,7 +6,7 @@ const jwtMiddleware = require('../helper/jwtMiddleware');
 router.post('/signup', userController.signup);
 router.post('/login', userController.login);
 router.post('/createUser', jwtMiddleware.jwtMiddleware(), jwtMiddleware.isAdmin, userController.createUser);
-router.get('/getAllUsers', jwtMiddleware.jwtMiddleware(), jwtMiddleware.isAdmin, userController.getAllUsers);
+router.get('/getAllUsers', userController.getAllUsers);
 router.get('/getUser/:id', jwtMiddleware.jwtMiddleware(), jwtMiddleware.isAuthenticated, userController.getUser);
 router.get('/currentUser', jwtMiddleware.jwtMiddleware(), jwtMiddleware.isAuthenticated, userController.getCurrentUser);
 router.put('/updateUserInfo/:id', jwtMiddleware.jwtMiddleware(), jwtMiddleware.isAdmin, userController.updateUserInfo);

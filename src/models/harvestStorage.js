@@ -55,6 +55,18 @@ class HarvestStorage {
         });
     }
 
+    static createHarvestStoragePromise(harvestStorage) {
+        return new Promise((resolve, reject) => {
+            connection.query("INSERT INTO culture_plan_harvested_storage SET ?", [harvestStorage], (err, res) => {
+                if (err) {
+                    reject(err)
+                } else {
+                    resolve(res)
+                }
+            });
+        })
+    }
+
     // static deleteharvestStorage(Id, result) {
     //     const deleteQuery = 'DELETE FROM culture_plan_harvested_storage WHERE harvestStorage_ID = ?'
 

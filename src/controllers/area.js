@@ -234,12 +234,19 @@ exports.deleteArea = (req, res) => {
 };
 
 exports.getAreasWithCulturePlan = (req, res) => {
+  const { Culture_Plan_ID } = req.query
   const query = `
-    SELECT DISTINCT a.*
-    FROM area a
-    JOIN culture_plan cp ON a.Area_Name = cp.Area;
+  select distinct *
+  from (select Area_Name
+        from culture_plan
+                left join area on culture_plan.Area = area.Area_Name
+        where Culture_Plan_ID = ? and Current_Quantity > 0
+        union
+        select Area_Name
+        from culture_plan_moved_area
+        where Culture_Plan_ID = ? and Current_Quantity > 0) a
   `;
-  dbConnection.query(query, (err, results) => {
+  dbConnection.query(query, [Culture_Plan_ID, Culture_Plan_ID], (err, results) => {
     if (err) {
       return res.status(500).json({ error: err.message });
     }
