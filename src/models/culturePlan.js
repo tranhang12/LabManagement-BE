@@ -24,6 +24,26 @@ class CulturePlan {
     });
   }
 
+
+  static findAllPromise() {
+    return new Promise((resolve, reject) => {
+      connection.query(`select cp.*,
+      (cp.Current_Quantity + IFNULL(f.Current_Quantity, 0)) as Aggregate_Current_Quantity,
+      (DATEDIFF(cp.Transition_Time, CURRENT_DATE))          as Remaining_Days
+  from culture_plan cp
+        left join (select Culture_Plan_ID, Sum(Current_Quantity) as Current_Quantity
+                   from culture_plan_moved_area
+                   group by Culture_Plan_ID) f on f.Culture_Plan_ID = cp.Culture_Plan_ID`
+        , (err, res) => {
+          if (err) {
+            reject(err)
+          } else {
+            resolve(res)
+          }
+        });
+    })
+  }
+
   static findById(Id, result) {
     connection.query(
       "SELECT * FROM culture_plan WHERE Culture_Plan_ID = ?",
@@ -77,7 +97,7 @@ class CulturePlan {
     })
   }
 
-  static updateCulturePlanCurrentQuantity = (Id, {Current_Quantity, Transition_Time}) => {
+  static updateCulturePlanCurrentQuantity = (Id, { Current_Quantity, Transition_Time }) => {
     return new Promise((resolve, reject) => {
       const updated = {
         Current_Quantity

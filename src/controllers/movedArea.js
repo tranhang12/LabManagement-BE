@@ -80,7 +80,7 @@ exports.addmovedArea = async (req, res) => {
     try {
         const { Culture_Plan_ID, Source_Area_Name, Destination_Area_Name, Quantity, Transition_Time } = req.body
         if (
-            !Culture_Plan_ID || !Source_Area_Name|| !Source_Area_Name || !Quantity
+            !Culture_Plan_ID || !Source_Area_Name || !Source_Area_Name || !Quantity
         ) {
             return res.status(400).send('Missing or invalid input');
         }
@@ -100,16 +100,16 @@ exports.addmovedArea = async (req, res) => {
                 });
             }
 
-            const newSourceQuantity = sourceQuantity - Quantity 
+            const newSourceQuantity = sourceQuantity - Quantity
             const foundIndex = movedArea.findIndex(e => e.Area_Name === Destination_Area_Name)
             if (foundIndex !== -1) {
                 // If Destination_Area_Name already in moved area
                 const newDestinationQuantity = movedArea[foundIndex].Current_Quantity + Quantity
-                
+
                 await Promise.all([
-                    MovedArea.updateMovedAreaCurrentQuantityAndTransitionTime(movedArea[foundIndex].ID, {
+                    MovedArea.updateMovedAreaQuantityAndTransitionTime(movedArea[foundIndex].ID, {
                         Current_Quantity: newDestinationQuantity,
-                        Transition_Time: Transition_Time
+                        Transition_Time: Transition_Time,
                     }),
                     CulturePlan.updateCulturePlanCurrentQuantity(culturePlanId, {
                         Current_Quantity: newSourceQuantity,
@@ -138,7 +138,7 @@ exports.addmovedArea = async (req, res) => {
                     status: true,
                     message: 'Record added successfully'
                 });
-            }         
+            }
 
         } else {
             // Move culture plan from moved area
@@ -165,9 +165,9 @@ exports.addmovedArea = async (req, res) => {
                 await Promise.all([
                     CulturePlan.updateCulturePlanCurrentQuantity(culturePlanId, {
                         Current_Quantity: newDestinationCurrentQuantity,
-                        Transaction_Time: Transition_Time
+                        Transition_Time: Transition_Time
                     }),
-                    MovedArea.updateMovedAreaCurrentQuantityAndTransitionTime(sourceMovedArea.ID, {
+                    MovedArea.updateMovedAreaQuantityAndTransitionTime(sourceMovedArea.ID, {
                         Current_Quantity: newSourceQuantity
                     }),
                 ])
@@ -183,12 +183,12 @@ exports.addmovedArea = async (req, res) => {
                 // If Destination_Area_Name already in moved area
                 const destinationMovedArea = movedArea[destinationMovedAreaIndex]
                 const newDestinationQuantity = destinationMovedArea.Current_Quantity + Quantity
-                
+
                 await Promise.all([
-                    MovedArea.updateMovedAreaCurrentQuantityAndTransitionTime(sourceMovedArea.ID, {
+                    MovedArea.updateMovedAreaQuantityAndTransitionTime(sourceMovedArea.ID, {
                         Current_Quantity: newSourceQuantity
                     }),
-                    MovedArea.updateMovedAreaCurrentQuantityAndTransitionTime(destinationMovedArea.ID, {
+                    MovedArea.updateMovedAreaQuantityAndTransitionTime(destinationMovedArea.ID, {
                         Current_Quantity: newDestinationQuantity,
                         Transition_Time: Transition_Time
                     }),
@@ -200,7 +200,7 @@ exports.addmovedArea = async (req, res) => {
                 });
             } else {
                 await Promise.all([
-                    MovedArea.updateMovedAreaCurrentQuantityAndTransitionTime(sourceMovedArea.ID, {
+                    MovedArea.updateMovedAreaQuantityAndTransitionTime(sourceMovedArea.ID, {
                         Current_Quantity: newSourceQuantity
                     }),
                     MovedArea.createMovedAreaPromise({
@@ -216,7 +216,7 @@ exports.addmovedArea = async (req, res) => {
                     status: true,
                     message: 'Record added successfully'
                 });
-            }      
+            }
         }
     }
     catch (error) {
@@ -228,35 +228,53 @@ exports.addmovedArea = async (req, res) => {
     }
 }
 
-exports.updatemovedArea = (req, res) => {
+exports.updateMovedAreaCurrentQuantity = async (req, res) => {
     try {
-        let movedArea = new MovedArea(req.body);
+        const {Culture_Plan_ID, New_Current_Quantity, Area_Name} = req.body
+        const culturePlanId = +Culture_Plan_ID;
+        const newCurrentQuantity = +New_Current_Quantity;
+        if (newCurrentQuantity < 0 || !Area_Name || !Culture_Plan_ID) { 
+            return res.status(400).send({
+                status: false,
+                message: 'Invalid request body'
+            });
+        }
+        const culturePlan = await CulturePlan.findByIdPromise(culturePlanId)
+        if (!culturePlan) {
+            return res.status(400).send({
+                status: false,
+                message: 'Culture plan not found'
+            });
+        }
 
-        movedArea.Id = req.params.Id
-        MovedArea.updatemovedArea(movedArea, (err, result) => {
-            if (err) {
-                res.status(500).send({
-                    status: false,
-                    message: 'Error in updating movedArea in database:' + err.message
-                });
-
-                return;
-            }
-
-            else if (result < 1) {
-                console.log(result)
-                res.status(500).send({
-                    status: false,
-                    message: 'Error in updating movedArea in database'
-                });
-                return;
-            }
-
-            res.status(200).send({
+        if (culturePlan.Area === Area_Name) {
+            await CulturePlan.updateCulturePlanCurrentQuantity(culturePlanId, {
+                Current_Quantity: newCurrentQuantity
+            })
+            return res.status(200).send({
                 status: true,
                 message: 'Record updated successfully'
             });
+        }
+
+        const movedArea = await MovedArea.findAllByCulturePlanIdPromise(culturePlanId)
+        const foundIndex = movedArea.findIndex(e => e.Area_Name === Area_Name)
+        if (foundIndex === -1) {
+            return res.status(400).send({
+                status: false,
+                message: 'Area not found'
+            });
+        }
+
+        await MovedArea.updateMovedAreaQuantityAndTransitionTime(movedArea[foundIndex].ID, {
+            Current_Quantity: newCurrentQuantity
+        })
+
+        return res.status(200).send({
+            status: true,
+            message: 'Record updated successfully'
         });
+
     }
     catch (error) {
         res.status(500).send({
@@ -304,3 +322,34 @@ exports.deletemovedArea = (req, res) => {
 
 
 
+exports.getAllMovedAreaOfCulturePlan = async (req, res) => {
+    try {
+        const { Culture_Plan_ID } = req.query
+        if (!Culture_Plan_ID) {
+            return res.status(400).send({
+                status: false,
+                message: 'Invalid request'
+            });
+        }
+        const movedArea = await MovedArea.findAllByCulturePlanIdAndCurrentQuantityLargerThanZero(+Culture_Plan_ID)
+
+        res.status(200).send({
+            status: true,
+            result: movedArea.map(e => ({
+                ID: e.ID,
+                Culture_Plan_ID: e.Culture_Plan_ID,
+                Area_Name: e.Area_Name,
+                Initial_Quantity: e.Initial_Quantity,
+                Current_Quantity: e.Current_Quantity,
+                Transition_Time: e.Transition_Time,
+                Remaining_Days: Math.ceil((e.Transition_Time.getTime() - new Date().getTime()) / (24 * 60 * 60 * 1000))
+            }))
+        });
+    } catch (error) {
+        console.log(error)
+        res.status(500).send({
+            status: false,
+            message: 'Error in getting movedArea in database:' + error.message
+        });
+    }
+}

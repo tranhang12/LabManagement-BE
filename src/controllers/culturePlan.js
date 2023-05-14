@@ -7,29 +7,16 @@ const encryption = require("../helper/encryption");
 const auth = require("basic-auth");
 const CulturePlan = require("../models/culturePlan");
 
-exports.getAllCulturePlans = (req, res) => {
+exports.getAllCulturePlans = async (req, res) => {
   try {
-    culturePlan.findAll((err, result) => {
-      if (err) {
-        res.status(500).send({
-          status: false,
-          message: "Error retrieving culture plans data from database",
-        });
-        return;
-      }
-      if (result != undefined) {
-        res.status(200).send({
-          status: true,
-          message: "Success",
-          result: result,
-        });
-      } else {
-        res.status(500).send({
-          status: false,
-          message: "Something went wrong",
-        });
-        return;
-      }
+    const results = await culturePlan.findAllPromise();
+    res.status(200).send({
+      status: true,
+      message: "Success",
+      result: results.map(e => ({
+        ...e,
+        Current_Quantity: e.Aggregate_Current_Quantity
+      })),
     });
   } catch (error) {
     res.status(500).send({

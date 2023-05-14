@@ -26,7 +26,6 @@ class MovedArea {
         return new Promise((resolve, reject) => {
             connection.query('SELECT * FROM culture_plan_moved_area WHERE Culture_Plan_ID = ?', [Id], (err, res) => {
                 if (err) {
-                    console.log('error: ', err);
                     reject(err)
                 } else {
                     resolve(res)
@@ -35,14 +34,42 @@ class MovedArea {
         })
     }
 
-    static updateMovedAreaCurrentQuantityAndTransitionTime(MovedAreaId, {Current_Quantity, Transition_Time}) {
+    static findAllByCulturePlanIdAndCurrentQuantityLargerThanZero(Id) {
+        return new Promise((resolve, reject) => {
+            connection.query('SELECT * FROM culture_plan_moved_area WHERE Culture_Plan_ID = ? AND Current_Quantity > 0', [Id], (err, res) => {
+                if (err) {
+                    reject(err)
+                } else {
+                    resolve(res)
+                }
+            });
+        })
+    }
+
+    static findByCulturePlanIdAndAreaName(Id, Area_Name) {
+        return new Promise((resolve, reject) => {
+            connection.query('SELECT * FROM culture_plan_moved_area WHERE Culture_Plan_ID = ? AND Area_Name = ? LIMIT 1', [Id, Area_Name], (err, res) => {
+                if (err) {
+                    reject(err)
+                } else {
+                    resolve(res)
+                }
+            });
+        })
+    }
+
+    static updateMovedAreaQuantityAndTransitionTime(MovedAreaId, { Current_Quantity, Initial_Quantity, Transition_Time }) {
         return new Promise((resolve, reject) => {
             const updated = {
                 Current_Quantity
-              }
-              if (Transition_Time) {
+            }
+            if (Transition_Time) {
                 updated.Transition_Time = Transition_Time
-              }
+            }
+            if (Initial_Quantity) {
+                updated.Initial_Quantity = Initial_Quantity
+            }
+
             connection.query('UPDATE culture_plan_moved_area SET ? WHERE ID = ?', [updated, MovedAreaId], (err, res) => {
                 if (err) {
                     reject(err)
@@ -85,12 +112,12 @@ class MovedArea {
                 }
             });
         })
-        
+
     }
-    
+
     static updatemovedArea(movedArea, result) {
         const updateQuery = 'UPDATE culture_plan_moved_area SET Crop_UID = ?, Current_Quantity = ?, Area_UID = ?, Name = ?, Initial_Quantity = ?, Transition_Time = ?, Remaining_Days = ?  WHERE ID = ?';
-        const updateData = [movedArea.Crop_UID, movedArea.Current_Quantity, movedArea.Area_UID, movedArea.Name, movedArea.Initial_Quantity,  movedArea.Transition_Time, movedArea.Remaining_Days, movedArea.Id];
+        const updateData = [movedArea.Crop_UID, movedArea.Current_Quantity, movedArea.Area_UID, movedArea.Name, movedArea.Initial_Quantity, movedArea.Transition_Time, movedArea.Remaining_Days, movedArea.Id];
 
         connection.query(updateQuery, updateData, (err, res) => {
             if (err) {
