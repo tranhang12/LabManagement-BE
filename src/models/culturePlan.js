@@ -24,24 +24,39 @@ class CulturePlan {
     });
   }
 
-
   static findAllPromise() {
     return new Promise((resolve, reject) => {
-      connection.query(`select cp.*,
-      (cp.Current_Quantity + IFNULL(f.Current_Quantity, 0)) as Aggregate_Current_Quantity,
-      (DATEDIFF(cp.Transition_Time, CURRENT_DATE))          as Remaining_Days
-  from culture_plan cp
-        left join (select Culture_Plan_ID, Sum(Current_Quantity) as Current_Quantity
-                   from culture_plan_moved_area
-                   group by Culture_Plan_ID) f on f.Culture_Plan_ID = cp.Culture_Plan_ID`
-        , (err, res) => {
+      connection.query(
+        `select
+        *
+      from
+        (
+        select
+          cp.*,
+          (cp.Current_Quantity + IFNULL(f.Current_Quantity, 0)) as Aggregate_Current_Quantity,
+          (DATEDIFF(cp.Transition_Time, CURRENT_DATE)) as Remaining_Days
+        from
+          culture_plan cp
+        left join (
+          select
+            Culture_Plan_ID,
+            Sum(Current_Quantity) as Current_Quantity
+          from
+            culture_plan_moved_area
+          group by
+            Culture_Plan_ID) f on
+          f.Culture_Plan_ID = cp.Culture_Plan_ID) a
+      where
+        Aggregate_Current_Quantity > 0`,
+        (err, res) => {
           if (err) {
-            reject(err)
+            reject(err);
           } else {
-            resolve(res)
+            resolve(res);
           }
-        });
-    })
+        }
+      );
+    });
   }
 
   static findById(Id, result) {
@@ -65,14 +80,14 @@ class CulturePlan {
         [Id],
         (err, res) => {
           if (err) {
-            reject(err)
+            reject(err);
           } else {
-            resolve(res[0])
+            resolve(res[0]);
           }
         }
       );
-    })
-  }
+    });
+  };
 
   static findAllOnTransition = () => {
     return new Promise((resolve, reject) => {
@@ -88,22 +103,25 @@ class CulturePlan {
               where ma.Transition_Time <= CURRENT_DATE AND ma.Current_Quantity > 0) b`,
         (err, res) => {
           if (err) {
-            reject(err)
+            reject(err);
           } else {
-            resolve(res)
+            resolve(res);
           }
         }
       );
-    })
-  }
+    });
+  };
 
-  static updateCulturePlanCurrentQuantity = (Id, { Current_Quantity, Transition_Time }) => {
+  static updateCulturePlanCurrentQuantity = (
+    Id,
+    { Current_Quantity, Transition_Time }
+  ) => {
     return new Promise((resolve, reject) => {
       const updated = {
-        Current_Quantity
-      }
+        Current_Quantity,
+      };
       if (Transition_Time) {
-        updated.Transition_Time = Transition_Time
+        updated.Transition_Time = Transition_Time;
       }
 
       connection.query(
@@ -111,14 +129,14 @@ class CulturePlan {
         [updated, Id],
         (err, res) => {
           if (err) {
-            reject(err)
+            reject(err);
           } else {
-            resolve(res)
+            resolve(res);
           }
         }
       );
-    })
-  }
+    });
+  };
 
   static createCulturePlan(culturePlan, result) {
     connection.query(
@@ -151,8 +169,8 @@ class CulturePlan {
       culturePlan.Remaining_Days,
       culturePlan.Culture_Plan_ID,
     ];
-    console.log(updateData)
-    console.log(updateQuery)
+    console.log(updateData);
+    console.log(updateQuery);
     connection.query(updateQuery, updateData, (err, res) => {
       if (err) {
         result(err, null);
@@ -163,7 +181,7 @@ class CulturePlan {
   }
 
   static deleteCulturePlan(Id, result) {
-    const deleteQuery = 'DELETE FROM culture_plan WHERE Culture_Plan_ID = ?'
+    const deleteQuery = "DELETE FROM culture_plan WHERE Culture_Plan_ID = ?";
 
     connection.query(deleteQuery, Id, (err, res) => {
       if (err) {
@@ -173,9 +191,6 @@ class CulturePlan {
       }
     });
   }
-
 }
 
 module.exports = CulturePlan;
-
-

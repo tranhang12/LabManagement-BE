@@ -9,7 +9,9 @@ class Trash {
   }
 
   static findAll(result) {
-    connection.query("SELECT * FROM culture_plan_trash", (err, res) => {
+    connection.query(`SELECT cpt.*, cp.BatchID, cp.Plant_Type, cp.Container_Type 
+    FROM culture_plan_trash cpt 
+    JOIN culture_plan cp ON cpt.Culture_Plan_ID = cp.Culture_Plan_ID`, (err, res) => {
       if (err) {
         console.log("error: ", err);
         result(err, null);
@@ -18,17 +20,6 @@ class Trash {
       }
     });
   }
-
-  // static findById(Id, result) {
-  //     connection.query('SELECT * FROM culture_plan_harvested_storage WHERE trash_ID = ?', [Id], (err, res) => {
-  //         if (err) {
-  //             console.log('error: ', err);
-  //             result(err, null);
-  //         } else {
-  //             result(null, res);
-  //         }
-  //     });
-  // }
 
   static createtrash(trash, result) {
     connection.query("INSERT INTO culture_plan_trash SET ?", trash, (err, res) => {
