@@ -39,7 +39,7 @@ class Notification {
         })
     }
 
-    static notifyCulturePlan(culturePlan, receivers) {
+    static async notifyCulturePlan(culturePlan, receivers) {
         const { BatchID, Area } = culturePlan
         for (const receiver of receivers) {
             const socket = getSocketByUsername(receiver)
@@ -51,20 +51,21 @@ class Notification {
             if (socket) {
                 Is_Read = 1
                 socket.send(msg)
-                return Promise.resolve(null)
+                continue
             } else {
-                return Notification.createNotification({
+                await Notification.createNotification({
                     Task_ID: 0,
                     Assigned_To: receiver,
                     Message: msg,
                     Is_Read,
                 })
+                continue;
             }
         }
 
 }
 
-    static notifyTaskStatus(task, receivers) {
+    static async notifyTaskStatus(task, receivers) {
     const { Status, Title, Task_ID } = task
     for (const receiver of receivers) {
         const socket = getSocketByUsername(receiver)
@@ -87,14 +88,15 @@ class Notification {
         if (socket) {
             Is_Read = 1
             socket.send(msg)
-            return Promise.resolve(null)
+            continue
         } else {
-            return Notification.createNotification({
+            await Notification.createNotification({
                 Task_ID,
                 Assigned_To: receiver,
                 Message: msg,
                 Is_Read,
             })
+            continue
         }
     }
 

@@ -6,8 +6,8 @@ const CulturePlan = require('../models/culturePlan');
 
 cron.schedule('* * * * *', async () => {
     try {
+        console.log("Cronjob running...")
         const culturePlans = await CulturePlan.findAllOnTransition();
-
         if (culturePlans.length == 0) {
             return
         }

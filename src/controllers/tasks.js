@@ -145,6 +145,7 @@ exports.updateTask = async (req, res) => {
         await Tasks.updateTaskStatusPromise(task.Task_ID, Status)
 
         const admins = await User.findAllAdmin()
+        console.log(admins)
         if (admins.length > 0) {
             await Notification.notifyTaskStatus({
                 ...task,
