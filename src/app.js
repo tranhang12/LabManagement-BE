@@ -51,26 +51,22 @@ app.use('/api/', userCulturePlanRoutes);
 app.use('/api', culturePlanRoute);
 
 app.get('/api/recordCounts', async (req, res) => {
-    try {
-      const areaCount = await getRecordCount('area');
-      const culturePlanCount = await getRecordCount('culture_plan');
-      const tasksCount = await getRecordCount('tasks');
-  
-      res.json({ areaCount, culturePlanCount, tasksCount });
-    } catch (error) {
-      console.error(error);
-      res.status(500).send('Server error');
-    }
-  });
+  try {
+    const areaCount = await getRecordCount('area');
+    const culturePlanCount = await getRecordCount('culture_plan', 'WHERE Current_Quantity > 0');
+    const tasksCount = await getRecordCount('tasks', 'WHERE Status = \'Incomplete\'');
+
+    res.json({ areaCount, culturePlanCount, tasksCount });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Server error');
+  }
+});
 
 wss.on('connection', (ws) => {
     handleSocket(ws);
 });
-// wss.on("close", (ws) => {
-//   console.log(ws)
-//   console.log("disconnect")
-// })
-// Connect to database
+
 dbConnection.connect((err) => {
     if (err) {
         console.log(err)

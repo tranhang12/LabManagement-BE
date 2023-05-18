@@ -8,7 +8,7 @@ class HarvestStorage {
     }
 
     static findAll(result) {
-        connection.query(`SELECT cphs.*, cp.BatchID, cp.Plant_Type, cp.Container_Type 
+        connection.query(`SELECT DISTINCT cphs.*, cp.BatchID, cp.Plant_Type, cp.Container_Type 
         FROM culture_plan_harvested_storage cphs 
         JOIN culture_plan cp ON cphs.Culture_Plan_ID = cp.Culture_Plan_ID`, (err, res) => {
             if (err) {

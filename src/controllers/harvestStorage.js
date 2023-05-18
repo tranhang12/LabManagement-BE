@@ -133,7 +133,7 @@ exports.addharvestStorage = async (req, res) => {
                 Quantity: harvestQuantity,
                 Source_Area_Name: Area_Name
             }),
-            MovedArea.updateMovedAreaCurrentQuantityAndTransitionTime(movedArea.ID, {
+            MovedArea.updateMovedAreaQuantityAndTransitionTime(movedArea.ID, {
                 Current_Quantity: movedArea.Current_Quantity - harvestQuantity,
             })
             ])

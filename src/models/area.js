@@ -10,7 +10,10 @@ class Area {
         this.Quantity = area.Quantity;
     }
     static findAll(result) {
-        connection.query('SELECT * FROM area', (err, res) => {
+        connection.query(`SELECT a.*, SUM(cp.Current_Quantity) AS Quantity
+        FROM area a
+        JOIN culture_plan cp ON a.Area_Name = cp.Area
+        GROUP BY a.Area_Name;`, (err, res) => {
             if (err) {
                 console.log('error: ', err);
                 result(err, null);

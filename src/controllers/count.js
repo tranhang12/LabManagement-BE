@@ -1,8 +1,8 @@
 const dbConnection = require('../config/dbConnection');
 
-const getRecordCount = (tableName) => {
+const getRecordCount = (tableName, whereCondition = '') => {
   return new Promise((resolve, reject) => {
-    dbConnection.query(`SELECT COUNT(*) as count FROM ${tableName}`, (error, results) => {
+    dbConnection.query(`SELECT COUNT(*) as count FROM ${tableName} ${whereCondition}`, (error, results) => {
       if (error) {
         return reject(error);
       }

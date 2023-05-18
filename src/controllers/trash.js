@@ -97,7 +97,7 @@ exports.addtrash = async(req, res) => {
             if (culturePlan.Current_Quantity < dumpQuantity || dumpQuantity <= 0) {
                 return res.status(400).send({
                     status: false,
-                    message: 'Invalid dump quantity'
+                    message: 'occurred quantity'
                 });
             }
             
@@ -121,7 +121,7 @@ exports.addtrash = async(req, res) => {
             }
 
             const movedArea = movedAreas[foundMovedAreaIndex]
-            if (!(movedArea.Current_Quantity >= dumpQuantity && dumpQuantity <= 0)) {
+            if ((movedArea.Current_Quantity < dumpQuantity || dumpQuantity <= 0)) {
                 return res.status(400).send({
                     status: false,
                     message: 'Invalid dump quantity'
@@ -133,7 +133,7 @@ exports.addtrash = async(req, res) => {
                 Quantity: dumpQuantity,
                 Source_Area_Name: Area_Name
             }),
-            MovedArea.updateMovedAreaCurrentQuantityAndTransitionTime(movedArea.ID, {
+            MovedArea.updateMovedAreaQuantityAndTransitionTime(movedArea.ID, {
                 Current_Quantity: movedArea.Current_Quantity - dumpQuantity,
             })
             ])

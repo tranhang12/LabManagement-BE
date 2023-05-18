@@ -2,17 +2,21 @@ const Area = require("../models/area");
 const encryption = require("../helper/encryption");
 const auth = require("basic-auth");
 const dbConnection = require('../config/dbConnection');
+
 exports.getAllAreas = (req, res) => {
   try {
-    Area.findAll((err, result) => {
+    dbConnection.query(`SELECT a.*, SUM(cp.Current_Quantity) AS Quantity
+      FROM area a
+      JOIN culture_plan cp ON a.Area_Name = cp.Area_Name
+      GROUP BY a.Area_Name`, (err, result) => {
       if (err) {
         res.status(500).send({
           status: false,
-          message: "Error retrieving area data from database:" + err.message,
+          message: "Error retrieving area data from database: " + err.message,
         });
         return;
       }
-      if (result != undefined) {
+      if (result.length > 0) {
         res.status(200).send({
           status: true,
           message: "Success",
@@ -21,18 +25,19 @@ exports.getAllAreas = (req, res) => {
       } else {
         res.status(500).send({
           status: false,
-          message: "Something went wrong",
+          message: "No data found",
         });
-        return;
       }
     });
   } catch (error) {
     res.status(500).send({
       status: false,
-      message: "Error in getting data from Database:" + error.message,
+      message: "Error in getting data from Database: " + error.message,
     });
   }
 };
+
+
 exports.getArea = (req, res) => {
   try {
     let { Id } = req.body;
